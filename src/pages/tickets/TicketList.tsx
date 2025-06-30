@@ -171,48 +171,46 @@ export const TicketList: React.FC = () => {
           <div className="absolute top-1/2 -left-24 w-64 h-64 bg-pink-400/20 rounded-full blur-2xl"></div>
         </div>
 
-        {/* Contenido del header - SIN max-width, usando padding responsive */}
-        <div className="relative w-full px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        {/* Contenido del header - Optimizado para móvil */}
+        <div className="relative w-full px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="mb-6 lg:mb-0">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
+            <div className="mb-4 lg:mb-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-2 sm:mb-3">
                 Lista de Boletos
-                <span className="block text-lg sm:text-xl lg:text-2xl font-normal text-purple-100 mt-2">
-                  Gestiona todos los boletos del sistema
-                </span>
               </h1>
-              <p className="text-base sm:text-lg text-purple-100">
-                Busca, filtra y administra boletos de manera eficiente
+              <p className="text-sm sm:text-base lg:text-lg text-purple-100 mb-3 sm:mb-0">
+                Gestiona todos los boletos del sistema
               </p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <div className="flex bg-white/10 backdrop-blur-lg rounded-xl p-1">
+            {/* Botones de vista - Movidos a la parte superior en móvil */}
+            <div className="flex justify-center lg:justify-end">
+              <div className="flex bg-white/10 backdrop-blur-lg rounded-xl p-1 w-full sm:w-auto">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     viewMode === 'grid' 
                       ? 'bg-white text-indigo-600 shadow-lg' 
                       : 'text-white hover:bg-white/10'
                   }`}
                 >
-                  <svg className="h-4 w-4 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-4 w-4 sm:mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
-                  Tarjetas
+                  <span className="hidden sm:inline">Tarjetas</span>
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     viewMode === 'list' 
                       ? 'bg-white text-indigo-600 shadow-lg' 
                       : 'text-white hover:bg-white/10'
                   }`}
                 >
-                  <svg className="h-4 w-4 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-4 w-4 sm:mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                   </svg>
-                  Lista
+                  <span className="hidden sm:inline">Lista</span>
                 </button>
               </div>
             </div>
@@ -233,61 +231,59 @@ export const TicketList: React.FC = () => {
           </div>
         )}
 
-        {/* Stats Row - Responsive grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        {/* Stats Row - Grid optimizado para móvil */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-6 sm:mb-8">
           {Object.entries(statusCounts).map(([status, count]) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`p-3 sm:p-4 rounded-2xl border-2 transition-all duration-200 ${
+              className={`p-3 rounded-xl border-2 transition-all duration-200 text-center ${
                 filterStatus === status 
-                  ? 'bg-white border-indigo-500 shadow-lg transform scale-105' 
+                  ? 'bg-white border-indigo-500 shadow-lg' 
                   : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-md'
               }`}
             >
-              <div className="text-center">
-                <div className="text-lg sm:text-2xl font-bold text-gray-900">{count}</div>
-                <div className="text-xs sm:text-sm text-gray-600 capitalize">
-                  {status === 'all' ? 'Total' : 
-                   status === 'active' ? 'Activos' :
-                   status === 'used' ? 'Usados' : 'Cancelados'}
-                </div>
+              <div className="text-lg sm:text-2xl font-bold text-gray-900">{count}</div>
+              <div className="text-xs sm:text-sm text-gray-600 capitalize">
+                {status === 'all' ? 'Total' : 
+                 status === 'active' ? 'Activos' :
+                 status === 'used' ? 'Usados' : 'Cancelados'}
               </div>
             </button>
           ))}
         </div>
 
-        {/* Search and Filters - Responsive */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 mb-6 sm:mb-8">
-          <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Buscar boletos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:text-base"
-                />
+        {/* Search and Filters - Compacto para móvil */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-3 sm:p-4 mb-6 sm:mb-8">
+          <div className="space-y-3">
+            {/* Barra de búsqueda */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
               </div>
+              <input
+                type="text"
+                placeholder="Buscar boletos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+              />
             </div>
             
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-              <div className="text-sm text-gray-600">
+            {/* Filtros y contador */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+              <div className="text-xs sm:text-sm text-gray-600">
                 {displayTickets.length} de {mockTickets.length} boletos
               </div>
               
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-xs sm:text-sm"
               >
-                <option value="all">Todos los estados</option>
+                <option value="all">Todos</option>
                 <option value="active">Activos</option>
                 <option value="used">Usados</option>
                 <option value="cancelled">Cancelados</option>
