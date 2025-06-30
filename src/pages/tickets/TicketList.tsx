@@ -27,9 +27,9 @@ export const TicketList: React.FC = () => {
     {
       id: '1',
       ticketNumber: 'NBL-12345678',
-      eventName: 'Concierto de Rock Internacional',
+      eventName: 'Fiesta Suchiapa',
       eventDate: new Date('2025-07-15T20:00:00'),
-      eventLocation: 'Estadio Nacional, Ciudad de México',
+      eventLocation: 'Los aguacates, Suchiapa',
       price: 150,
       buyerName: 'Juan Pérez García',
       buyerEmail: 'juan.perez@email.com',
@@ -42,10 +42,10 @@ export const TicketList: React.FC = () => {
     {
       id: '2',
       ticketNumber: 'NBL-87654321',
-      eventName: 'Festival de Jazz Primaveral',
+      eventName: 'Fiesta Suchiapa',
       eventDate: new Date('2025-08-20T19:30:00'),
-      eventLocation: 'Teatro Principal, Guadalajara',
-      price: 85,
+      eventLocation: 'Los aguacates, Suchiapa',
+      price: 150,
       buyerName: 'María González López',
       buyerEmail: 'maria.gonzalez@email.com',
       buyerPhone: '+52 999 765 4321',
@@ -58,10 +58,10 @@ export const TicketList: React.FC = () => {
     {
       id: '3',
       ticketNumber: 'NBL-11223344',
-      eventName: 'Obra de Teatro Clásica',
+      eventName: 'Fiesta Suchiapa',
       eventDate: new Date('2025-09-10T18:00:00'),
-      eventLocation: 'Centro Cultural, Monterrey',
-      price: 45,
+      eventLocation: 'Los aguacates, Suchiapa',
+      price: 150,
       buyerName: 'Carlos Rodríguez Martínez',
       buyerEmail: 'carlos.rodriguez@email.com',
       buyerPhone: '+52 999 112 2334',
@@ -73,10 +73,10 @@ export const TicketList: React.FC = () => {
     {
       id: '4',
       ticketNumber: 'NBL-55667788',
-      eventName: 'Concierto Sinfónico de Temporada',
+      eventName: 'Fiesta Suchiapa',
       eventDate: new Date('2025-10-05T20:30:00'),
-      eventLocation: 'Palacio de Bellas Artes',
-      price: 200,
+      eventLocation: 'Los aguacates, Suchiapa',
+      price: 150,
       buyerName: 'Ana Martínez Sánchez',
       buyerEmail: 'ana.martinez@email.com',
       buyerPhone: '+52 999 556 6778',
@@ -161,8 +161,8 @@ export const TicketList: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+      {/* Hero Header - PANTALLA COMPLETA */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 w-full">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         
         {/* Background decoration */}
@@ -171,26 +171,39 @@ export const TicketList: React.FC = () => {
           <div className="absolute top-1/2 -left-24 w-64 h-64 bg-pink-400/20 rounded-full blur-2xl"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        {/* Contenido del header - SIN max-width, usando padding responsive */}
+        <div className="relative w-full px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="mb-8 lg:mb-0">
-              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+            <div className="mb-6 lg:mb-0">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
                 Lista de Boletos
-                <span className="block text-xl lg:text-2xl font-normal text-purple-100 mt-2">
+                <span className="block text-lg sm:text-xl lg:text-2xl font-normal text-purple-100 mt-2">
                   Gestiona todos los boletos del sistema
                 </span>
               </h1>
-              <p className="text-lg text-purple-100 max-w-2xl">
+              <p className="text-base sm:text-lg text-purple-100">
                 Busca, filtra y administra boletos de manera eficiente
               </p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <div className="flex bg-white/10 backdrop-blur-lg rounded-xl p-1">
-
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    viewMode === 'grid' 
+                      ? 'bg-white text-indigo-600 shadow-lg' 
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  <svg className="h-4 w-4 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                  </svg>
+                  Tarjetas
+                </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     viewMode === 'list' 
                       ? 'bg-white text-indigo-600 shadow-lg' 
                       : 'text-white hover:bg-white/10'
@@ -207,33 +220,34 @@ export const TicketList: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      {/* Contenido principal - SIN max-width, usando padding responsive */}
+      <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         {success && (
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <Alert type="success" message={success} onClose={() => setSuccess('')} />
           </div>
         )}
         {error && (
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <Alert type="error" message={error} />
           </div>
         )}
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        {/* Stats Row - Responsive grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {Object.entries(statusCounts).map(([status, count]) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+              className={`p-3 sm:p-4 rounded-2xl border-2 transition-all duration-200 ${
                 filterStatus === status 
                   ? 'bg-white border-indigo-500 shadow-lg transform scale-105' 
                   : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-md'
               }`}
             >
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{count}</div>
-                <div className="text-sm text-gray-600 capitalize">
+                <div className="text-lg sm:text-2xl font-bold text-gray-900">{count}</div>
+                <div className="text-xs sm:text-sm text-gray-600 capitalize">
                   {status === 'all' ? 'Total' : 
                    status === 'active' ? 'Activos' :
                    status === 'used' ? 'Usados' : 'Cancelados'}
@@ -243,10 +257,10 @@ export const TicketList: React.FC = () => {
           ))}
         </div>
 
-        {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-4">
-            <div className="flex-1 max-w-md">
+        {/* Search and Filters - Responsive */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div className="flex-1">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -255,15 +269,15 @@ export const TicketList: React.FC = () => {
                 </div>
                 <input
                   type="text"
-                  placeholder="Buscar por número, comprador, evento o email..."
+                  placeholder="Buscar boletos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:text-base"
                 />
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
               <div className="text-sm text-gray-600">
                 {displayTickets.length} de {mockTickets.length} boletos
               </div>
@@ -271,7 +285,7 @@ export const TicketList: React.FC = () => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
               >
                 <option value="all">Todos los estados</option>
                 <option value="active">Activos</option>
@@ -282,10 +296,10 @@ export const TicketList: React.FC = () => {
           </div>
         </div>
 
-        {/* Tickets Display */}
+        {/* Tickets Display - Responsive grids */}
         {viewMode === 'grid' ? (
-          /* Grid View */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          /* Grid View - Responsive columns */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {displayTickets.map((ticket) => (
               <div
                 key={ticket.id}
@@ -295,10 +309,10 @@ export const TicketList: React.FC = () => {
                 {/* Card Header */}
                 <div className={`h-2 bg-gradient-to-r ${getStatusColor(ticket.status)}`}></div>
                 
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   {/* Ticket Number & Status */}
                   <div className="flex items-center justify-between mb-4">
-                    <div className="font-mono text-sm font-bold text-gray-900">
+                    <div className="font-mono text-xs sm:text-sm font-bold text-gray-900 truncate mr-2">
                       {ticket.ticketNumber}
                     </div>
                     {getStatusBadge(ticket.status)}
@@ -306,7 +320,7 @@ export const TicketList: React.FC = () => {
                   
                   {/* Event Info */}
                   <div className="mb-4">
-                    <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-2">
+                    <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-2 line-clamp-2">
                       {ticket.eventName}
                     </h3>
                     <p className="text-gray-600 text-sm mb-2 line-clamp-1">
@@ -325,13 +339,13 @@ export const TicketList: React.FC = () => {
                   
                   {/* Buyer Info */}
                   <div className="mb-4">
-                    <p className="text-gray-900 font-medium text-sm">{ticket.buyerName}</p>
-                    <p className="text-gray-500 text-xs">{ticket.buyerEmail}</p>
+                    <p className="text-gray-900 font-medium text-sm line-clamp-1">{ticket.buyerName}</p>
+                    <p className="text-gray-500 text-xs line-clamp-1">{ticket.buyerEmail}</p>
                   </div>
                   
                   {/* Price & Actions */}
                   <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-xl sm:text-2xl font-bold text-green-600">
                       ${ticket.price}
                     </div>
                     <div className="flex space-x-2">
@@ -361,28 +375,28 @@ export const TicketList: React.FC = () => {
             ))}
           </div>
         ) : (
-          /* List View */
+          /* List View - Responsive table */
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Boleto
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                       Evento
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                       Comprador
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Estado
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Precio
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Acciones
                     </th>
                   </tr>
@@ -394,7 +408,7 @@ export const TicketList: React.FC = () => {
                       className="hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
                       onClick={() => handleViewDetails(ticket)}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className={`w-3 h-3 rounded-full mr-3 bg-gradient-to-r ${getStatusColor(ticket.status)}`}></div>
                           <div>
@@ -406,13 +420,13 @@ export const TicketList: React.FC = () => {
                             </div>
                             {/* Mobile-only info */}
                             <div className="lg:hidden mt-1">
-                              <div className="text-sm font-medium text-gray-900">{ticket.eventName}</div>
-                              <div className="text-xs text-gray-500">{ticket.buyerName}</div>
+                              <div className="text-sm font-medium text-gray-900 line-clamp-1">{ticket.eventName}</div>
+                              <div className="text-xs text-gray-500 line-clamp-1">{ticket.buyerName}</div>
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
                         <div className="text-sm text-gray-900 font-medium">{ticket.eventName}</div>
                         <div className="text-sm text-gray-500">{ticket.eventLocation}</div>
                         <div className="text-xs text-gray-500">
@@ -424,17 +438,17 @@ export const TicketList: React.FC = () => {
                           })}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
                         <div className="text-sm text-gray-900 font-medium">{ticket.buyerName}</div>
                         <div className="text-sm text-gray-500">{ticket.buyerEmail}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(ticket.status)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-lg font-bold text-green-600">${ticket.price}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right">
                         <div className="flex justify-end space-x-2">
                           <Button
                             size="sm"
@@ -474,14 +488,14 @@ export const TicketList: React.FC = () => {
 
         {/* Empty State */}
         {displayTickets.length === 0 && (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-2xl flex items-center justify-center">
-              <svg className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 sm:p-12 text-center">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-4 sm:mb-6 bg-gray-100 rounded-2xl flex items-center justify-center">
+              <svg className="h-8 sm:h-10 w-8 sm:w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No se encontraron boletos</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">No se encontraron boletos</h3>
+            <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               {searchTerm || filterStatus !== 'all' 
                 ? 'Intenta ajustar los filtros de búsqueda' 
                 : 'Aún no hay boletos en el sistema'
@@ -507,6 +521,7 @@ export const TicketList: React.FC = () => {
         )}
       </div>
 
+      {/* Los modales permanecen igual... */}
       {/* Ticket Details Modal */}
       <Modal
         isOpen={showDetailModal}
@@ -517,7 +532,7 @@ export const TicketList: React.FC = () => {
         {selectedTicket && (
           <div className="space-y-6">
             {/* Ticket Preview */}
-            <div className={`relative overflow-hidden bg-gradient-to-br ${getStatusColor(selectedTicket.status)} text-white p-8 rounded-2xl shadow-2xl`}>
+            <div className={`relative overflow-hidden bg-gradient-to-br ${getStatusColor(selectedTicket.status)} text-white p-6 sm:p-8 rounded-2xl shadow-2xl`}>
               {/* Background Pattern */}
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute top-0 left-0 w-full h-full" style={{
@@ -526,18 +541,18 @@ export const TicketList: React.FC = () => {
               </div>
               
               <div className="relative">
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h3 className="text-3xl font-bold mb-2">{selectedTicket.eventName}</h3>
-                    <p className="text-white/80 text-lg">{selectedTicket.eventLocation}</p>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6">
+                  <div className="mb-4 sm:mb-0">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2">{selectedTicket.eventName}</h3>
+                    <p className="text-white/80 text-base sm:text-lg">{selectedTicket.eventLocation}</p>
                   </div>
                   {getStatusBadge(selectedTicket.status)}
                 </div>
                 
-                <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
                   <div>
                     <p className="text-white/60 text-sm mb-1">Fecha del Evento</p>
-                    <p className="font-semibold text-lg">
+                    <p className="font-semibold text-base sm:text-lg">
                       {new Date(selectedTicket.eventDate).toLocaleDateString('es-MX', {
                         weekday: 'long',
                         year: 'numeric',
@@ -550,26 +565,26 @@ export const TicketList: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-white/60 text-sm mb-1">Precio</p>
-                    <p className="font-semibold text-lg">${selectedTicket.price}</p>
+                    <p className="font-semibold text-base sm:text-lg">${selectedTicket.price}</p>
                   </div>
                   <div>
                     <p className="text-white/60 text-sm mb-1">Comprador</p>
-                    <p className="font-semibold">{selectedTicket.buyerName}</p>
+                    <p className="font-semibold text-sm sm:text-base">{selectedTicket.buyerName}</p>
                   </div>
                   <div>
                     <p className="text-white/60 text-sm mb-1">Boleto #</p>
-                    <p className="font-semibold font-mono">{selectedTicket.ticketNumber}</p>
+                    <p className="font-semibold font-mono text-sm sm:text-base">{selectedTicket.ticketNumber}</p>
                   </div>
                 </div>
 
                 <div className="flex justify-center">
-                  <div className="bg-white p-6 rounded-2xl shadow-lg">
+                  <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg">
                     <img
                       src={qrService.generateQRCode(selectedTicket.qrCode)}
                       alt="QR Code"
-                      className="w-32 h-32 mx-auto"
+                      className="w-24 h-24 sm:w-32 sm:h-32 mx-auto"
                     />
-                    <p className="text-center text-gray-600 text-xs mt-3 font-mono">
+                    <p className="text-center text-gray-600 text-xs mt-3 font-mono break-all">
                       {selectedTicket.qrCode}
                     </p>
                   </div>
@@ -578,21 +593,21 @@ export const TicketList: React.FC = () => {
             </div>
 
             {/* Additional Details */}
-            <div className="bg-gray-50 rounded-2xl p-6">
+            <div className="bg-gray-50 rounded-2xl p-4 sm:p-6">
               <h4 className="font-bold text-gray-900 mb-4">Información Adicional</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Email</p>
-                    <p className="font-medium text-gray-900">{selectedTicket.buyerEmail}</p>
+                    <p className="font-medium text-gray-900 text-sm break-all">{selectedTicket.buyerEmail}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Teléfono</p>
-                    <p className="font-medium text-gray-900">{selectedTicket.buyerPhone}</p>
+                    <p className="font-medium text-gray-900 text-sm">{selectedTicket.buyerPhone}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Fecha de Creación</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 text-sm">
                       {selectedTicket.createdAt.toLocaleDateString('es-MX', {
                         year: 'numeric',
                         month: 'long',
@@ -607,7 +622,7 @@ export const TicketList: React.FC = () => {
                   {selectedTicket.usedAt && (
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Fecha de Uso</p>
-                      <p className="font-medium text-orange-600">
+                      <p className="font-medium text-orange-600 text-sm">
                         {selectedTicket.usedAt.toLocaleDateString('es-MX', {
                           year: 'numeric',
                           month: 'long',
@@ -620,7 +635,7 @@ export const TicketList: React.FC = () => {
                   )}
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Código QR</p>
-                    <p className="font-mono text-sm text-gray-900 bg-gray-200 px-3 py-2 rounded-lg">
+                    <p className="font-mono text-xs sm:text-sm text-gray-900 bg-gray-200 px-3 py-2 rounded-lg break-all">
                       {selectedTicket.qrCode}
                     </p>
                   </div>
@@ -697,10 +712,11 @@ export const TicketList: React.FC = () => {
             </p>
           </div>
           
-          <div className="flex justify-end space-x-3">
+          <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
             <Button
               variant="secondary"
               onClick={() => setShowResendModal(false)}
+              className="flex-1 sm:flex-none"
             >
               Cancelar
             </Button>
@@ -708,6 +724,7 @@ export const TicketList: React.FC = () => {
               onClick={handleConfirmResend}
               loading={resendLoading}
               disabled={!resendEmail}
+              className="flex-1 sm:flex-none"
             >
               {resendLoading ? 'Enviando...' : 'Reenviar Boleto'}
             </Button>
