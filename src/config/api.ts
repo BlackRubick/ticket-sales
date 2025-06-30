@@ -39,7 +39,7 @@ class ApiClient {
           if (refreshToken) {
             try {
               const response = await this.post('/auth/refresh', { refreshToken });
-              const { token } = response.data;
+              const { token } = response.data as { token: string };
               localStorage.setItem(STORAGE_KEYS.auth_token, token);
               
               // Retry original request
