@@ -1,6 +1,6 @@
 import { apiClient } from '../config/api';
-import { Ticket, TicketFormData, TicketScanResult } from '../types/ticket';
-import { ApiResponse, PaginatedResponse } from '../types/api';
+import type { Ticket, TicketFormData, TicketScanResult } from '../types/ticket';
+import type { ApiResponse, PaginatedResponse } from '../types/api';
 import { API_ENDPOINTS } from '../config/endpoints';
 
 export const ticketService = {

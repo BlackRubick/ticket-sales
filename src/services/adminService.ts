@@ -1,5 +1,5 @@
 import { apiClient } from '../config/api';
-import { DashboardStats } from '../types/api';
+import type { DashboardStats } from '../types/api';
 import { API_ENDPOINTS } from '../config/endpoints';
 
 export const adminService = {

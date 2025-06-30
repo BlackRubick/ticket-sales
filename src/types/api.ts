@@ -1,3 +1,5 @@
+import type { Ticket } from './ticket';
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;

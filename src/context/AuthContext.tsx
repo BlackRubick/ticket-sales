@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { User, AuthContextType, LoginCredentials } from '../types/auth';
-import { authService } from '../services/authService';
-import { STORAGE_KEYS } from '../config/constants';
+// src/context/AuthContext.tsx
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import type { User, AuthContextType, LoginCredentials } from '../types/auth.js';
+import { authService } from '../services/authService.js';
 
 interface AuthState {
   user: User | null;
@@ -54,8 +55,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     // Check if user is already logged in
-    const token = localStorage.getItem(STORAGE_KEYS.auth_token);
-    const userData = localStorage.getItem(STORAGE_KEYS.user_data);
+    const token = localStorage.getItem('nebula_auth_token');
+    const userData = localStorage.getItem('nebula_user_data');
 
     if (token && userData) {
       try {
@@ -73,9 +74,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       dispatch({ type: 'LOGIN_START' });
       const response = await authService.login(credentials);
       
-      localStorage.setItem(STORAGE_KEYS.auth_token, response.token);
-      localStorage.setItem(STORAGE_KEYS.user_data, JSON.stringify(response.user));
-      localStorage.setItem(STORAGE_KEYS.refresh_token, response.refreshToken);
+      localStorage.setItem('nebula_auth_token', response.token);
+      localStorage.setItem('nebula_user_data', JSON.stringify(response.user));
+      localStorage.setItem('nebula_refresh_token', response.refreshToken);
       
       dispatch({
         type: 'LOGIN_SUCCESS',
@@ -88,9 +89,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
-    localStorage.removeItem(STORAGE_KEYS.auth_token);
-    localStorage.removeItem(STORAGE_KEYS.user_data);
-    localStorage.removeItem(STORAGE_KEYS.refresh_token);
+    localStorage.removeItem('nebula_auth_token');
+    localStorage.removeItem('nebula_user_data');
+    localStorage.removeItem('nebula_refresh_token');
     dispatch({ type: 'LOGOUT' });
   };
 

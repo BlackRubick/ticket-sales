@@ -1,3 +1,4 @@
+// src/config/constants.ts
 export const APP_CONFIG = {
   name: 'Nebula',
   version: '1.0.0',
@@ -6,7 +7,7 @@ export const APP_CONFIG = {
 };
 
 export const API_CONFIG = {
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
   timeout: 10000,
   retries: 3
 };

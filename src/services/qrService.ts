@@ -1,4 +1,4 @@
-import { TicketScanResult } from '../types/ticket';
+import type { TicketScanResult } from '../types/ticket';
 import { ticketService } from './ticketService';
 
 export const qrService = {

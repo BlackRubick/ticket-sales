@@ -1,26 +1,50 @@
-import { apiClient } from '../config/api';
-import { LoginCredentials, AuthResponse } from '../types/auth';
-import { API_ENDPOINTS } from '../config/endpoints';
+// src/services/authService.ts
+import type { LoginCredentials, AuthResponse } from '../types/auth.js';
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
-    return response.data;
+    // Mock implementation - simular login
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (credentials.email === 'admin@nebula.com' && credentials.password === 'admin123') {
+          resolve({
+            user: {
+              id: '1',
+              email: credentials.email,
+              name: 'Administrador',
+              role: 'admin',
+              createdAt: new Date(),
+              updatedAt: new Date()
+            },
+            token: 'mock-jwt-token-12345',
+            refreshToken: 'mock-refresh-token-67890'
+          });
+        } else {
+          reject(new Error('Credenciales incorrectas'));
+        }
+      }, 1000);
+    });
   },
 
   async logout(): Promise<void> {
-    await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
+    return Promise.resolve();
   },
 
   async refreshToken(refreshToken: string): Promise<{ token: string }> {
-    const response = await apiClient.post<{ token: string }>(API_ENDPOINTS.AUTH.REFRESH, {
-      refreshToken
+    return Promise.resolve({
+      token: 'new-mock-jwt-token-54321'
     });
-    return response.data;
   },
 
   async getProfile() {
-    const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE);
-    return response.data;
+    return Promise.resolve({
+      success: true,
+      data: {
+        id: '1',
+        email: 'admin@nebula.com',
+        name: 'Administrador',
+        role: 'admin'
+      }
+    });
   }
 };

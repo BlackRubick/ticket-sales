@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Ticket, TicketFormData } from '../types/ticket';
+import type { Ticket, TicketFormData } from '../types/ticket';
 import { ticketService } from '../services/ticketService';
 
 export const useTickets = () => {
