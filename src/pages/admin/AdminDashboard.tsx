@@ -197,117 +197,100 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Total Tickets - CORREGIDO: cambiado text-black por text-white */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-white">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full"></div>
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <svg
-                      className="h-6 w-6"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <span className="text-blue-100 text-sm font-medium">
-                    +12%
-                  </span>
+            {/* Total Tickets */}
+            <div className="bg-blue-600 rounded-2xl p-6 text-white shadow-xl border border-blue-700">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-blue-700 rounded-xl">
+                  <svg
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
-                <div className="text-3xl font-bold mb-1">
-                  {stats.totalTickets.toLocaleString()}
-                </div>
-                <div className="text-blue-100 text-sm">Total Boletos</div>
+                <span className="text-blue-200 text-sm font-medium bg-blue-700 px-2 py-1 rounded">
+                  +12%
+                </span>
               </div>
+              <div className="text-3xl font-bold mb-1 text-white">
+                {stats?.totalTickets?.toLocaleString() || '0'}
+              </div>
+              <div className="text-blue-200 text-sm font-medium">Total Boletos</div>
             </div>
 
             {/* Active Tickets */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 p-6 text-white">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full"></div>
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <svg
-                      className="h-6 w-6"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-green-100 text-sm font-medium">
-                    +8%
-                  </span>
+            <div className="bg-green-600 rounded-2xl p-6 text-white shadow-xl border border-green-700">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-green-700 rounded-xl">
+                  <svg
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
-                <div className="text-3xl font-bold mb-1">
-                  {stats.activeTickets.toLocaleString()}
-                </div>
-                <div className="text-green-100 text-sm">Boletos Activos</div>
+                <span className="text-green-200 text-sm font-medium bg-green-700 px-2 py-1 rounded">
+                  +8%
+                </span>
               </div>
+              <div className="text-3xl font-bold mb-1 text-white">
+                {stats?.activeTickets?.toLocaleString() || '0'}
+              </div>
+              <div className="text-green-200 text-sm font-medium">Boletos Activos</div>
             </div>
 
             {/* Revenue */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 p-6 text-white">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full"></div>
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <svg
-                      className="h-6 w-6"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-purple-100 text-sm font-medium">
-                    +15%
-                  </span>
+            <div className="bg-purple-600 rounded-2xl p-6 text-white shadow-xl border border-purple-700">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-purple-700 rounded-xl">
+                  <svg
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
                 </div>
-                <div className="text-3xl font-bold mb-1">
-                  ${stats.totalRevenue.toLocaleString()}
-                </div>
-                <div className="text-purple-100 text-sm">Ingresos Totales</div>
+                <span className="text-purple-200 text-sm font-medium bg-purple-700 px-2 py-1 rounded">
+                  +15%
+                </span>
               </div>
+              <div className="text-3xl font-bold mb-1 text-white">
+                ${stats?.totalRevenue?.toLocaleString() || '0'}
+              </div>
+              <div className="text-purple-200 text-sm font-medium">Ingresos Totales</div>
             </div>
 
             {/* Today's Sales */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 p-6 text-white">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full"></div>
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <svg
-                      className="h-6 w-6"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-orange-100 text-sm font-medium">
-                    +25%
-                  </span>
+            <div className="bg-orange-600 rounded-2xl p-6 text-white shadow-xl border border-orange-700">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-orange-700 rounded-xl">
+                  <svg
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </div>
-                <div className="text-3xl font-bold mb-1">
-                  {stats.todaysSales}
-                </div>
-                <div className="text-orange-100 text-sm">Ventas Hoy</div>
+                <span className="text-orange-200 text-sm font-medium bg-orange-700 px-2 py-1 rounded">
+                  +25%
+                </span>
               </div>
+              <div className="text-3xl font-bold mb-1 text-white">
+                {stats?.todaysSales?.toLocaleString() || '0'}
+              </div>
+              <div className="text-orange-200 text-sm font-medium">Ventas Hoy</div>
             </div>
           </div>
         </div>
