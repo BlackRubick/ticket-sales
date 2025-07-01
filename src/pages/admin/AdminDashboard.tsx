@@ -113,7 +113,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="mb-8 lg:mb-0">
                 <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4">
-                  Dashboard zzzz
+                  Dashboard zzz 
                   <span className="block text-2xl lg:text-3xl font-normal text-blue-100 mt-2">
                     Panel de Control
                   </span>
