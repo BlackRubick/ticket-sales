@@ -101,7 +101,7 @@ export const QRScanner: React.FC = () => {
               <Button
                 variant="secondary"
                 onClick={() => setShowManualInput(true)}
-                className="bg-white/10 backdrop-blur-lg text-white border-white/20 hover:bg-white/20"
+                className="!bg-white/10 !backdrop-blur-lg !text-white !border-white/20 hover:!bg-white/20"
               >
                 <svg
                   className="h-5 w-5 mr-2"
@@ -121,7 +121,8 @@ export const QRScanner: React.FC = () => {
               {!isScanning ? (
                 <Button
                   onClick={startScanning}
-                  className="bg-white text-cyan-600 hover:bg-gray-100"
+                  variant="light"
+                  className="shadow-lg"
                 >
                   <svg
                     className="h-5 w-5 mr-2"
@@ -148,7 +149,7 @@ export const QRScanner: React.FC = () => {
                 <Button
                   variant="danger"
                   onClick={stopScanning}
-                  className="bg-red-500 text-white hover:bg-red-600"
+                  className="!bg-red-500 !text-white hover:!bg-red-600"
                 >
                   <svg
                     className="h-5 w-5 mr-2"
@@ -369,7 +370,7 @@ export const QRScanner: React.FC = () => {
                       <p className="text-gray-600 mb-4">
                         Haz clic en "Iniciar Cámara" para comenzar a escanear
                       </p>
-                      <Button onClick={startScanning} size="sm">
+                      <Button onClick={startScanning} variant="light" size="sm">
                         Activar Cámara
                       </Button>
                     </div>
@@ -851,7 +852,7 @@ export const QRScanner: React.FC = () => {
                     // Mark ticket as used logic would go here
                     setShowResultModal(false);
                   }}
-                  className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700"
+                  className="flex-1 sm:flex-none !bg-green-600 hover:!bg-green-700"
                 >
                   <svg
                     className="h-5 w-5 mr-2"
