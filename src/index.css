@@ -1,80 +1,189 @@
+/* 🚨 EMERGENCY MOBILE FIX - Agrega esto al FINAL de tu index.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* ===== RESET COMPLETO PARA MÓVIL ===== */
+
+/* 1. Reset básico */
+* {
+  box-sizing: border-box !important;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. HTML y Body setup */
+html {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  width: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background-color: #ffffff;
+  color: #213547;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-/* CORREGIDO: Removido display: flex y place-items: center */
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #ffffff; /* Fondo blanco para el modo claro */
-  color: #213547; /* Texto oscuro para el modo claro */
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #f9f9f9; /* Fondo claro para botones */
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* Asegurar que el root container ocupe toda la pantalla */
+/* 3. Root container sin limitaciones */
 #root {
-  width: 100%;
-  min-height: 100vh;
+  width: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  overflow-x: hidden !important;
 }
 
-/* Media query para modo claro (que es lo que estás usando) */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* 4. Prevenir elementos que se salen */
+div, section, main, header, footer, nav {
+  max-width: 100% !important;
+  overflow-x: hidden;
+}
+
+/* 5. Contenedores responsive seguros */
+.container-safe {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-safe {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
-  a:hover {
-    color: #747bff;
+}
+
+@media (min-width: 1024px) {
+  .container-safe {
+    max-width: 80rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+/* 6. Headers full-width seguros */
+.header-full {
+  width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .header-full {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header-full {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* 7. Fix para gradientes en móvil */
+.gradient-full {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  position: relative;
+}
+
+/* 8. Prevenir zoom automático en inputs móvil */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+/* 9. Buttons touch-friendly */
+button, .btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* 10. Images responsive por defecto */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 11. Text no debe crear scroll horizontal */
+p, h1, h2, h3, h4, h5, h6, span, div {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* 12. Tables responsive */
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* 13. Navegación móvil */
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-stack {
+    flex-direction: column;
+  }
+  
+  .mobile-full {
+    width: 100% !important;
+  }
+}
+
+/* 14. Debug helper (remover en producción) */
+.debug-mobile {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  z-index: 9999;
+}
+
+/* 15. Utilities adicionales */
+.w-screen-safe {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.no-scroll-x {
+  overflow-x: hidden !important;
+}
+
+.mobile-p-4 {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .mobile-p-4 {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-p-4 {
+    padding: 2rem;
   }
 }
