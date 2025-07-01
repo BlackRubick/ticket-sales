@@ -148,7 +148,7 @@ export const TicketSales: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 onClick={() => setShowForm(true)}
-                className="bg-white text-purple-600 hover:bg-gray-100 shadow-lg"
+                className="bg-white text-black hover:bg-gray-100 shadow-lg"
                 size="lg"
               >
                 <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
