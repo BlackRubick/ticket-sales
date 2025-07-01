@@ -182,7 +182,7 @@ export const TicketList: React.FC = () => {
       {/* Hero Header - PANTALLA COMPLETA */}
       <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 w-full">
         <div className="absolute inset-0 bg-black opacity-20"></div>
-</div>
+
         {/* Background decoration */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
           <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-xl"></div>
@@ -902,7 +902,9 @@ export const TicketList: React.FC = () => {
             </Button>
           </div>
         </div>
+        
       </Modal>
+    </div>
     </div>
   );
 };
