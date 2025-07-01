@@ -113,7 +113,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="mb-8 lg:mb-0">
                 <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4">
-                  Dashboard zzz 
+                  Dashboard 
                   <span className="block text-2xl lg:text-3xl font-normal text-blue-100 mt-2">
                     Panel de Control
                   </span>
@@ -197,8 +197,8 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Total Tickets */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-black">
+            {/* Total Tickets - CORREGIDO: cambiado text-black por text-white */}
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-white">
               <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full"></div>
               <div className="relative">
                 <div className="flex items-center justify-between mb-4">
@@ -211,14 +211,14 @@ export const AdminDashboard: React.FC = () => {
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <span className="text-black text-sm font-medium">
+                  <span className="text-blue-100 text-sm font-medium">
                     +12%
                   </span>
                 </div>
                 <div className="text-3xl font-bold mb-1">
                   {stats.totalTickets.toLocaleString()}
                 </div>
-                <div className="text-black text-sm">Total Boletos</div>
+                <div className="text-blue-100 text-sm">Total Boletos</div>
               </div>
             </div>
 
