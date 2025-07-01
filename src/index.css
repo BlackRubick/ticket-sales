@@ -187,3 +187,25 @@ table {
     padding: 2rem;
   }
 }
+
+/* 🚨 FIX ESPECÍFICO PARA HEADERS FULL-WIDTH */
+.header-fullscreen {
+  width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+/* Alternativa más agresiva si la primera no funciona */
+.force-fullwidth {
+  width: 100vw !important;
+  position: relative;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+}
