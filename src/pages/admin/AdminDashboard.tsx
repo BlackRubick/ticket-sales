@@ -211,14 +211,14 @@ export const AdminDashboard: React.FC = () => {
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <span className="text-blue-100 text-sm font-medium">
+                  <span className="text-black text-sm font-medium">
                     +12%
                   </span>
                 </div>
                 <div className="text-3xl font-bold mb-1">
                   {stats.totalTickets.toLocaleString()}
                 </div>
-                <div className="text-blue-100 text-sm">Total Boletos</div>
+                <div className="text-black text-sm">Total Boletos</div>
               </div>
             </div>
 
