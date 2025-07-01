@@ -184,10 +184,10 @@ export const QRScanner: React.FC = () => {
             <Alert type="error" message={error} />
           </div>
         )}
-
         {/* Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+        // Código mejorado (responsive):
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-3 bg-green-100 rounded-xl mr-4">
                 <svg
@@ -282,7 +282,6 @@ export const QRScanner: React.FC = () => {
             </div>
           </div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Scanner Section */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
