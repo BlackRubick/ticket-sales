@@ -65,10 +65,7 @@ export const LoginPage: React.FC = () => {
               {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </Button>
 
-            <div className="text-center text-sm text-gray-600">
-              <p>Credenciales de prueba:</p>
-              <p>admin@nebula.com / admin123</p>
-            </div>
+
           </form>
         </Card>
       </div>
