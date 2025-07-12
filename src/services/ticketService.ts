@@ -4,6 +4,26 @@ import type { Ticket, TicketFormData, TicketScanResult } from '../types/ticket';
 import type { ApiResponse, PaginatedResponse } from '../types/api';
 import { API_ENDPOINTS } from '../config/endpoints';
 
+// Función para mapear los datos de la API al formato del frontend
+const mapApiTicketToTicket = (apiTicket: any): Ticket => {
+  return {
+    id: apiTicket.id,
+    ticketNumber: apiTicket.ticket_number || apiTicket.ticketNumber,
+    eventName: apiTicket.event_name || apiTicket.eventName,
+    eventDate: new Date(apiTicket.event_date || apiTicket.eventDate),
+    eventLocation: apiTicket.event_location || apiTicket.eventLocation,
+    price: parseFloat(apiTicket.price) || 0,
+    buyerName: apiTicket.buyer_name || apiTicket.buyerName,
+    buyerEmail: apiTicket.buyer_email || apiTicket.buyerEmail,
+    buyerPhone: apiTicket.buyer_phone || apiTicket.buyerPhone,
+    qrCode: apiTicket.qr_code || apiTicket.qrCode,
+    status: apiTicket.status,
+    createdAt: new Date(apiTicket.created_at || apiTicket.createdAt),
+    updatedAt: new Date(apiTicket.updated_at || apiTicket.updatedAt),
+    usedAt: apiTicket.used_at ? new Date(apiTicket.used_at) : undefined
+  };
+};
+
 export const ticketService = {
   async getTickets(params?: {
     page?: number;
@@ -21,38 +41,78 @@ export const ticketService = {
       if (params?.eventId) queryParams.set('eventId', params.eventId);
 
       const url = `${API_ENDPOINTS.TICKETS.LIST}?${queryParams.toString()}`;
-      const response = await apiClient.get<ApiResponse<Ticket[]> & { meta: any }>(url);
+      
+      console.log('🚀 Fetching tickets from:', url);
+      
+      const response = await apiClient.get<{
+        success: boolean;
+        data: any[];
+        meta?: {
+          pagination?: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+          };
+        };
+        error?: string;
+      }>(url);
 
-      if (response.data.success) {
+      console.log('📦 Raw API response:', response.data);
+
+      if (response.data.success && Array.isArray(response.data.data)) {
+        // Mapear los datos de la API al formato del frontend
+        const mappedTickets = response.data.data.map(mapApiTicketToTicket);
+        
+        console.log('✅ Mapped tickets:', mappedTickets);
+
         return {
-          data: response.data.data,
-          total: response.data.meta?.pagination?.total || response.data.data.length,
-          page: response.data.meta?.pagination?.page || 1,
-          limit: response.data.meta?.pagination?.limit || 10,
+          data: mappedTickets,
+          total: response.data.meta?.pagination?.total || mappedTickets.length,
+          page: response.data.meta?.pagination?.page || params?.page || 1,
+          limit: response.data.meta?.pagination?.limit || params?.limit || 10,
           totalPages: response.data.meta?.pagination?.totalPages || 1
         };
       } else {
         throw new Error(response.data.error || 'Error obteniendo boletos');
       }
     } catch (error: any) {
-      console.error('Error fetching tickets:', error);
+      console.error('❌ Error fetching tickets:', error);
       
-      // Fallback a datos mock si la API falla
-      if (import.meta.env.DEV) {
-        console.warn('⚠️ Usando datos mock para boletos...');
+      // Si hay un error de red o la API no está disponible, usar datos mock en desarrollo
+      if (import.meta.env.DEV && (
+        error.code === 'ECONNREFUSED' || 
+        error.code === 'ERR_NETWORK' ||
+        error.code === 'NETWORK_ERROR' ||
+        error.message?.includes('Network Error') ||
+        error.message?.includes('connect ECONNREFUSED')
+      )) {
+        console.warn('⚠️ API no disponible, usando datos mock...');
         return this.getMockTickets(params);
       }
       
-      throw new Error(error.response?.data?.error?.message || 'Error obteniendo boletos');
+      throw new Error(error.response?.data?.error?.message || error.message || 'Error obteniendo boletos');
     }
   },
 
   async getTicket(id: string): Promise<ApiResponse<Ticket>> {
     try {
-      const response = await apiClient.get<ApiResponse<Ticket>>(
-        API_ENDPOINTS.TICKETS.GET.replace(':id', id)
-      );
-      return response.data;
+      const response = await apiClient.get<{
+        success: boolean;
+        data: any;
+        message?: string;
+        error?: string;
+      }>(API_ENDPOINTS.TICKETS.GET.replace(':id', id));
+      
+      if (response.data.success && response.data.data) {
+        return {
+          success: true,
+          data: mapApiTicketToTicket(response.data.data),
+          message: response.data.message || 'Boleto obtenido exitosamente'
+        };
+      } else {
+        throw new Error(response.data.error || 'Error obteniendo boleto');
+      }
     } catch (error: any) {
       throw new Error(error.response?.data?.error?.message || 'Error obteniendo boleto');
     }
@@ -60,38 +120,58 @@ export const ticketService = {
 
   async createTicket(ticketData: TicketFormData): Promise<ApiResponse<Ticket>> {
     try {
-      const response = await apiClient.post<ApiResponse<Ticket>>(
-        API_ENDPOINTS.TICKETS.CREATE,
-        ticketData
-      );
+      console.log('🎫 Creating ticket with data:', ticketData);
+      
+      const response = await apiClient.post<{
+        success: boolean;
+        data: any;
+        message?: string;
+        error?: string;
+      }>(API_ENDPOINTS.TICKETS.CREATE, ticketData);
 
-      if (response.data.success) {
-        return response.data;
+      console.log('📦 Create ticket response:', response.data);
+
+      if (response.data.success && response.data.data) {
+        return {
+          success: true,
+          data: mapApiTicketToTicket(response.data.data),
+          message: response.data.message || 'Boleto creado exitosamente'
+        };
       } else {
         throw new Error(response.data.error || 'Error creando boleto');
       }
     } catch (error: any) {
-      console.error('Error creating ticket:', error);
+      console.error('❌ Error creating ticket:', error);
       
-      // Fallback a mock en desarrollo
-      if (import.meta.env.DEV && (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK')) {
+      // Fallback a mock en desarrollo si la API no está disponible
+      if (import.meta.env.DEV && (
+        error.code === 'ECONNREFUSED' || 
+        error.code === 'ERR_NETWORK' ||
+        error.code === 'NETWORK_ERROR' ||
+        error.message?.includes('Network Error')
+      )) {
         console.warn('⚠️ API no disponible, creando boleto mock...');
         return this.createMockTicket(ticketData);
       }
       
-      throw new Error(error.response?.data?.error?.message || 'Error creando boleto');
+      throw new Error(error.response?.data?.error?.message || error.message || 'Error creando boleto');
     }
   },
 
   async resendTicket(ticketId: string, email: string): Promise<ApiResponse<void>> {
     try {
-      const response = await apiClient.post<ApiResponse<void>>(
-        API_ENDPOINTS.TICKETS.RESEND.replace(':id', ticketId),
-        { email }
-      );
+      const response = await apiClient.post<{
+        success: boolean;
+        message?: string;
+        error?: string;
+      }>(API_ENDPOINTS.TICKETS.RESEND.replace(':id', ticketId), { email });
 
       if (response.data.success) {
-        return response.data;
+        return {
+          success: true,
+          data: undefined,
+          message: response.data.message || `Boleto reenviado a ${email}`
+        };
       } else {
         throw new Error(response.data.error || 'Error reenviando boleto');
       }
@@ -116,13 +196,22 @@ export const ticketService = {
 
   async scanTicket(qrData: string): Promise<TicketScanResult> {
     try {
-      const response = await apiClient.post<ApiResponse<TicketScanResult>>(
-        API_ENDPOINTS.TICKETS.SCAN,
-        { qrData }
-      );
+      const response = await apiClient.post<{
+        success: boolean;
+        data: {
+          ticket: any;
+          isValid: boolean;
+          message: string;
+        };
+        error?: string;
+      }>(API_ENDPOINTS.TICKETS.SCAN, { qrData });
 
-      if (response.data.success) {
-        return response.data.data;
+      if (response.data.success && response.data.data) {
+        return {
+          ticket: mapApiTicketToTicket(response.data.data.ticket),
+          isValid: response.data.data.isValid,
+          message: response.data.data.message
+        };
       } else {
         throw new Error(response.data.error || 'Error escaneando boleto');
       }
@@ -139,12 +228,18 @@ export const ticketService = {
 
   async markTicketAsUsed(ticketId: string): Promise<ApiResponse<void>> {
     try {
-      const response = await apiClient.put<ApiResponse<void>>(
-        API_ENDPOINTS.TICKETS.UPDATE.replace(':id', ticketId) + '/mark-used'
-      );
+      const response = await apiClient.put<{
+        success: boolean;
+        message?: string;
+        error?: string;
+      }>(API_ENDPOINTS.TICKETS.UPDATE.replace(':id', ticketId) + '/mark-used');
 
       if (response.data.success) {
-        return response.data;
+        return {
+          success: true,
+          data: undefined,
+          message: response.data.message || 'Boleto marcado como usado'
+        };
       } else {
         throw new Error(response.data.error || 'Error marcando boleto como usado');
       }
@@ -155,12 +250,18 @@ export const ticketService = {
 
   async cancelTicket(ticketId: string): Promise<ApiResponse<void>> {
     try {
-      const response = await apiClient.delete<ApiResponse<void>>(
-        API_ENDPOINTS.TICKETS.DELETE.replace(':id', ticketId)
-      );
+      const response = await apiClient.delete<{
+        success: boolean;
+        message?: string;
+        error?: string;
+      }>(API_ENDPOINTS.TICKETS.DELETE.replace(':id', ticketId));
 
       if (response.data.success) {
-        return response.data;
+        return {
+          success: true,
+          data: undefined,
+          message: response.data.message || 'Boleto cancelado'
+        };
       } else {
         throw new Error(response.data.error || 'Error cancelando boleto');
       }
@@ -202,8 +303,26 @@ export const ticketService = {
         createdAt: new Date('2025-05-15'),
         updatedAt: new Date('2025-06-15'),
         usedAt: new Date('2025-06-15')
+      },
+      {
+        id: '3',
+        ticketNumber: 'NBL-11223344',
+        eventName: 'Teatro Musical',
+        eventDate: new Date('2025-09-10T18:00:00'),
+        eventLocation: 'Teatro Principal',
+        price: 180,
+        buyerName: 'Carlos Rodríguez Martínez',
+        buyerEmail: 'carlos.rodriguez@email.com',
+        buyerPhone: '+52 999 112 2334',
+        qrCode: 'NEBULA-789-ghi012',
+        status: 'active',
+        createdAt: new Date('2025-06-20'),
+        updatedAt: new Date('2025-06-20')
       }
     ];
+
+    // Simular delay de red
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     // Filtrar por búsqueda si se proporciona
     let filteredTickets = mockTickets;
@@ -212,7 +331,8 @@ export const ticketService = {
       filteredTickets = mockTickets.filter(ticket =>
         ticket.ticketNumber.toLowerCase().includes(search) ||
         ticket.buyerName.toLowerCase().includes(search) ||
-        ticket.eventName.toLowerCase().includes(search)
+        ticket.eventName.toLowerCase().includes(search) ||
+        ticket.buyerEmail.toLowerCase().includes(search)
       );
     }
 
@@ -221,16 +341,25 @@ export const ticketService = {
       filteredTickets = filteredTickets.filter(ticket => ticket.status === params.status);
     }
 
+    const page = params?.page || 1;
+    const limit = params?.limit || 10;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedTickets = filteredTickets.slice(startIndex, endIndex);
+
     return {
-      data: filteredTickets,
+      data: paginatedTickets,
       total: filteredTickets.length,
-      page: params?.page || 1,
-      limit: params?.limit || 10,
-      totalPages: 1
+      page,
+      limit,
+      totalPages: Math.ceil(filteredTickets.length / limit)
     };
   },
 
   async createMockTicket(ticketData: TicketFormData): Promise<ApiResponse<Ticket>> {
+    // Simular delay de red
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
     const mockTicket: Ticket = {
       id: Math.random().toString(36).substr(2, 9),
       ticketNumber: `NBL-${Date.now().toString().slice(-8)}`,
@@ -247,18 +376,17 @@ export const ticketService = {
       updatedAt: new Date()
     };
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: mockTicket,
-          message: 'Boleto creado exitosamente'
-        });
-      }, 1500);
-    });
+    return {
+      success: true,
+      data: mockTicket,
+      message: 'Boleto creado exitosamente'
+    };
   },
 
   async mockScanTicket(qrData: string): Promise<TicketScanResult> {
+    // Simular delay de red
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
     const mockTicket: Ticket = {
       id: '1',
       ticketNumber: 'NBL-12345678',
@@ -276,18 +404,14 @@ export const ticketService = {
       usedAt: Math.random() > 0.3 ? undefined : new Date()
     };
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          ticket: mockTicket,
-          isValid: mockTicket.status === 'active',
-          message: mockTicket.status === 'active' 
-            ? 'Boleto válido' 
-            : mockTicket.status === 'used'
-            ? 'Boleto ya utilizado'
-            : 'Boleto cancelado'
-        });
-      }, 1500);
-    });
+    return {
+      ticket: mockTicket,
+      isValid: mockTicket.status === 'active',
+      message: mockTicket.status === 'active' 
+        ? 'Boleto válido' 
+        : mockTicket.status === 'used'
+        ? 'Boleto ya utilizado'
+        : 'Boleto cancelado'
+    };
   }
 };
