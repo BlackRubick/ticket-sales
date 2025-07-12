@@ -620,6 +620,7 @@ export const TicketList: React.FC = () => {
       >
         {selectedTicket && (
           <div className="space-y-6">
+            {/* Ticket Preview con gradiente - texto blanco */}
             <div
               className={`relative overflow-hidden bg-gradient-to-br ${getStatusColor(
                 selectedTicket.status
@@ -634,17 +635,19 @@ export const TicketList: React.FC = () => {
                 ></div>
               </div>
 
-              <div className="relative">
+              <div className="relative text-white">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6">
                   <div className="mb-4 sm:mb-0">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-white">
                       {selectedTicket.eventName}
                     </h3>
                     <p className="text-white/80 text-base sm:text-lg">
                       {selectedTicket.eventLocation}
                     </p>
                   </div>
-                  {getStatusBadge(selectedTicket.status)}
+                  <div className="flex justify-start sm:justify-end">
+                    {getStatusBadge(selectedTicket.status)}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
@@ -652,7 +655,7 @@ export const TicketList: React.FC = () => {
                     <p className="text-white/60 text-sm mb-1">
                       Fecha del Evento
                     </p>
-                    <p className="font-semibold text-base sm:text-lg">
+                    <p className="font-semibold text-base sm:text-lg text-white">
                       {new Date(selectedTicket.eventDate).toLocaleDateString(
                         "es-MX",
                         {
@@ -668,19 +671,19 @@ export const TicketList: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-white/60 text-sm mb-1">Precio</p>
-                    <p className="font-semibold text-base sm:text-lg">
+                    <p className="font-semibold text-base sm:text-lg text-white">
                       ${selectedTicket.price}
                     </p>
                   </div>
                   <div>
                     <p className="text-white/60 text-sm mb-1">Comprador</p>
-                    <p className="font-semibold text-sm sm:text-base">
+                    <p className="font-semibold text-sm sm:text-base text-white">
                       {selectedTicket.buyerName}
                     </p>
                   </div>
                   <div>
                     <p className="text-white/60 text-sm mb-1">Boleto #</p>
-                    <p className="font-semibold font-mono text-sm sm:text-base">
+                    <p className="font-semibold font-mono text-sm sm:text-base text-white">
                       {selectedTicket.ticketNumber}
                     </p>
                   </div>
@@ -701,7 +704,7 @@ export const TicketList: React.FC = () => {
               </div>
             </div>
 
-            {/* Additional Details */}
+            {/* Additional Details - FONDO GRIS CON TEXTO OSCURO */}
             <div className="bg-gray-50 rounded-2xl p-4 sm:p-6">
               <h4 className="font-bold text-gray-900 mb-4">
                 Información Adicional
@@ -760,6 +763,7 @@ export const TicketList: React.FC = () => {
               </div>
             </div>
 
+            {/* Botones de acción */}
             <div className="flex flex-col sm:flex-row justify-end gap-3">
               <Button
                 variant="secondary"
