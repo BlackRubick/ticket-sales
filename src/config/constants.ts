@@ -8,7 +8,7 @@ export const APP_CONFIG = {
 
 export const API_CONFIG = {
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
-  timeout: 10000,
+  timeout: 30000,
   retries: 3
 };
 
@@ -29,3 +29,9 @@ export const USER_ROLES = {
   SALES: 'sales',
   SCANNER: 'scanner'
 } as const;
+
+export const DEV_USERS = {
+  admin: { email: 'admin@nebula.com', password: 'admin123', role: 'admin' },
+  sales: { email: 'sales@nebula.com', password: 'sales123', role: 'sales' },
+  scanner: { email: 'scanner@nebula.com', password: 'scanner123', role: 'scanner' }
+};
