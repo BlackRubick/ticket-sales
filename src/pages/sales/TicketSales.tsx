@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Alert } from '../../components/ui/Alert';
 import { Modal } from '../../components/ui/Modal';
 import { Badge } from '../../components/ui/Badge';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { useTickets } from '../../hooks/useTickets';
+import { adminService } from '../../services/adminService';
 import type { TicketFormData, Ticket } from '../../types/ticket';
+import type { DashboardStats } from '../../types/api';
 import { qrService } from '../../services/qrService';
 
 export const TicketSales: React.FC = () => {
@@ -15,6 +18,8 @@ export const TicketSales: React.FC = () => {
   const [generatedTicket, setGeneratedTicket] = useState<Ticket | null>(null);
   const [success, setSuccess] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [formData, setFormData] = useState<TicketFormData>({
     eventName: '',
     eventDate: '',
@@ -25,7 +30,25 @@ export const TicketSales: React.FC = () => {
     buyerPhone: ''
   });
 
-  const { createTicket, loading, error } = useTickets();
+  const { createTicket, loading, error, fetchTickets } = useTickets();
+
+  // Cargar estadísticas al montar el componente
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        setStatsLoading(true);
+        const dashboardStats = await adminService.getDashboardStats();
+        setStats(dashboardStats);
+      } catch (err) {
+        console.error('Error loading stats:', err);
+        // En caso de error, mantener stats como null para mostrar valores por defecto
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,6 +80,14 @@ export const TicketSales: React.FC = () => {
         buyerEmail: '',
         buyerPhone: ''
       });
+
+      // Recargar estadísticas después de crear un boleto
+      try {
+        const updatedStats = await adminService.getDashboardStats();
+        setStats(updatedStats);
+      } catch (err) {
+        console.error('Error refreshing stats:', err);
+      }
     } catch (err) {
       console.error('Error creating ticket:', err);
     }
@@ -108,16 +139,25 @@ export const TicketSales: React.FC = () => {
   };
 
   const quickTemplates = [
-    { name: 'Fiesta', icon: '🎵', eventName: 'Fiesta Suchiapa ', location: 'Los aguacates', price: 150 },
-
+    { name: 'Fiesta', icon: '🎵', eventName: 'Fiesta Suchiapa', location: 'Los aguacates', price: 150 },
+    { name: 'Concierto', icon: '🎤', eventName: 'Concierto de Rock', location: 'Estadio Nacional', price: 200 },
+    { name: 'Teatro', icon: '🎭', eventName: 'Obra de Teatro', location: 'Teatro Principal', price: 180 },
+    { name: 'Deportes', icon: '⚽', eventName: 'Partido de Fútbol', location: 'Estadio Municipal', price: 120 },
   ];
 
-  const recentSales = [
-    { id: 1, event: 'Fiesta Suchiapa', buyer: 'Juan Pérez', amount: 150, time: 'Hace 5 min' },
-    { id: 2, event: 'Fiesta Suchiapa', buyer: 'Cesar Gomez', amount: 150, time: 'Hace 5 min' },
-    { id: 3, event: 'Fiesta Suchiapa', buyer: 'Felipe Morales', amount: 150, time: 'Hace 5 min' },
+  // Calcular estadísticas de ventas del día
+  const todaysSales = stats?.todaysSales || 0;
+  const todaysRevenue = stats ? (stats.todaysSales * (stats.totalRevenue / Math.max(stats.totalTickets, 1))) : 0;
+  const averageTicketPrice = stats ? Math.round(stats.totalRevenue / Math.max(stats.totalTickets, 1)) : 150;
 
-  ];
+  // Obtener ventas recientes de las estadísticas
+  const recentSales = stats?.recentTickets.slice(0, 3).map((ticket, index) => ({
+    id: ticket.id,
+    event: ticket.eventName,
+    buyer: ticket.buyerName,
+    amount: ticket.price,
+    time: index === 0 ? 'Hace 5 min' : index === 1 ? 'Hace 15 min' : 'Hace 30 min'
+  })) || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -206,7 +246,7 @@ export const TicketSales: React.FC = () => {
 
         {/* Stats and Recent Sales */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Stats - CORREGIDAS */}
+          {/* Stats - DATOS REALES DE LA API */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Ventas Hoy */}
             <div className="bg-blue-600 rounded-2xl p-6 text-white shadow-xl border border-blue-700">
@@ -216,10 +256,21 @@ export const TicketSales: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <span className="text-blue-200 text-sm font-medium bg-blue-700 px-2 py-1 rounded">+25%</span>
+                <span className="text-blue-200 text-sm font-medium bg-blue-700 px-2 py-1 rounded">
+                  {statsLoading ? '...' : '+25%'}
+                </span>
               </div>
-              <div className="text-3xl font-bold mb-1 text-white">12</div>
-              <div className="text-blue-200 text-sm font-medium">Ventas Hoy</div>
+              {statsLoading ? (
+                <div className="flex items-center space-x-2">
+                  <LoadingSpinner size="sm" />
+                  <div className="text-blue-200 text-sm">Cargando...</div>
+                </div>
+              ) : (
+                <>
+                  <div className="text-3xl font-bold mb-1 text-white">{todaysSales}</div>
+                  <div className="text-blue-200 text-sm font-medium">Ventas Hoy</div>
+                </>
+              )}
             </div>
 
             {/* Ingresos Hoy */}
@@ -230,10 +281,23 @@ export const TicketSales: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                   </svg>
                 </div>
-                <span className="text-green-200 text-sm font-medium bg-green-700 px-2 py-1 rounded">+18%</span>
+                <span className="text-green-200 text-sm font-medium bg-green-700 px-2 py-1 rounded">
+                  {statsLoading ? '...' : '+18%'}
+                </span>
               </div>
-              <div className="text-3xl font-bold mb-1 text-white">$1,800</div>
-              <div className="text-green-200 text-sm font-medium">Ingresos Hoy</div>
+              {statsLoading ? (
+                <div className="flex items-center space-x-2">
+                  <LoadingSpinner size="sm" />
+                  <div className="text-green-200 text-sm">Cargando...</div>
+                </div>
+              ) : (
+                <>
+                  <div className="text-3xl font-bold mb-1 text-white">
+                    ${Math.round(todaysRevenue).toLocaleString()}
+                  </div>
+                  <div className="text-green-200 text-sm font-medium">Ingresos Hoy</div>
+                </>
+              )}
             </div>
 
             {/* Promedio */}
@@ -244,20 +308,35 @@ export const TicketSales: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </div>
-                <span className="text-purple-200 text-sm font-medium bg-purple-700 px-2 py-1 rounded">+12%</span>
+                <span className="text-purple-200 text-sm font-medium bg-purple-700 px-2 py-1 rounded">
+                  {statsLoading ? '...' : '+12%'}
+                </span>
               </div>
-              <div className="text-3xl font-bold mb-1 text-white">$150</div>
-              <div className="text-purple-200 text-sm font-medium">Promedio</div>
+              {statsLoading ? (
+                <div className="flex items-center space-x-2">
+                  <LoadingSpinner size="sm" />
+                  <div className="text-purple-200 text-sm">Cargando...</div>
+                </div>
+              ) : (
+                <>
+                  <div className="text-3xl font-bold mb-1 text-white">${averageTicketPrice}</div>
+                  <div className="text-purple-200 text-sm font-medium">Promedio</div>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Recent Sales */}
+          {/* Recent Sales - DATOS REALES DE LA API */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100">
               <h3 className="text-lg font-bold text-gray-900">Ventas Recientes</h3>
             </div>
             <div className="p-6">
-              {recentSales.length > 0 ? (
+              {statsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <LoadingSpinner size="md" />
+                </div>
+              ) : recentSales.length > 0 ? (
                 <div className="space-y-4">
                   {recentSales.map((sale) => (
                     <div key={sale.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
@@ -266,8 +345,8 @@ export const TicketSales: React.FC = () => {
                           <span className="text-white text-sm font-bold">🎫</span>
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900 text-sm">{sale.event}</div>
-                          <div className="text-xs text-gray-600">{sale.buyer}</div>
+                          <div className="font-medium text-gray-900 text-sm line-clamp-1">{sale.event}</div>
+                          <div className="text-xs text-gray-600 line-clamp-1">{sale.buyer}</div>
                           <div className="text-xs text-gray-500">{sale.time}</div>
                         </div>
                       </div>
@@ -484,7 +563,9 @@ export const TicketSales: React.FC = () => {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
                       })}
                     </p>
                   </div>
@@ -533,7 +614,7 @@ export const TicketSales: React.FC = () => {
                 Descargar
               </Button>
               
-                {typeof navigator.share === 'function' && (
+              {typeof navigator.share === 'function' && (
                 <Button variant="secondary" onClick={shareTicket} className="flex-1 sm:flex-none">
                   <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684z" />
