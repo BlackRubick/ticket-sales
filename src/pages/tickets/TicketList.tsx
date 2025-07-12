@@ -671,7 +671,7 @@ export const TicketList: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-black/60 text-sm mb-1">Precio</p>
-                    <p className="font-semibold text-base sm:text-lg text-white">
+                    <p className="font-semibold text-base sm:text-lg text-black">
                       ${selectedTicket.price}
                     </p>
                   </div>
@@ -683,7 +683,7 @@ export const TicketList: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-black/60 text-sm mb-1">Boleto #</p>
-                    <p className="font-semibold font-mono text-sm sm:text-base text-white">
+                    <p className="font-semibold font-mono text-sm sm:text-base text-black">
                       {selectedTicket.ticketNumber}
                     </p>
                   </div>
