@@ -703,6 +703,7 @@ export const TicketList: React.FC = () => {
                 </div>
               </div>
             </div>
+            {/* pa hacer el comit xd*/}
 
             {/* Additional Details - FONDO GRIS CON TEXTO OSCURO */}
             <div className="bg-gray-50 rounded-2xl p-4 sm:p-6">
