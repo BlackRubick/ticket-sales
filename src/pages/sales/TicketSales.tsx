@@ -139,10 +139,7 @@ export const TicketSales: React.FC = () => {
   };
 
   const quickTemplates = [
-    { name: 'Fiesta', icon: '🎵', eventName: 'Fiesta Suchiapa', location: 'Los aguacates', price: 150 },
-    { name: 'Concierto', icon: '🎤', eventName: 'Concierto de Rock', location: 'Estadio Nacional', price: 200 },
-    { name: 'Teatro', icon: '🎭', eventName: 'Obra de Teatro', location: 'Teatro Principal', price: 180 },
-    { name: 'Deportes', icon: '⚽', eventName: 'Partido de Fútbol', location: 'Estadio Municipal', price: 120 },
+    { name: 'Fiesta', icon: '🎵', eventName: 'Fiesta Suchiapa', location: 'Los aguacates', price: 100},
   ];
 
   // Calcular estadísticas de ventas del día
