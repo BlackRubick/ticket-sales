@@ -2,6 +2,37 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
 import { API_CONFIG, STORAGE_KEYS } from './constants';
 
+// Interfaces para las respuestas de la API
+interface RefreshTokenResponse {
+  success: boolean;
+  data: {
+    token: string;
+  };
+  error?: {
+    message: string;
+    code?: string;
+  };
+}
+
+interface HealthCheckResponse {
+  success: boolean;
+  data: {
+    status: string;
+    timestamp: string;
+    version: string;
+    environment: string;
+  };
+  message: string;
+}
+
+interface ApiErrorResponse {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+  };
+}
+
 class ApiClient {
   private instance: AxiosInstance;
 
@@ -49,7 +80,7 @@ class ApiClient {
         }
         return response;
       },
-      async (error: AxiosError) => {
+      async (error: AxiosError<ApiErrorResponse>) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
         // Si el token expiró (401), intentar renovarlo
@@ -59,7 +90,7 @@ class ApiClient {
           const refreshToken = localStorage.getItem(STORAGE_KEYS.refresh_token);
           if (refreshToken) {
             try {
-              const response = await this.post('/auth/refresh', { refreshToken });
+              const response = await this.post<RefreshTokenResponse>('/auth/refresh', { refreshToken });
               const { token } = response.data.data;
               
               localStorage.setItem(STORAGE_KEYS.auth_token, token);
@@ -109,32 +140,46 @@ class ApiClient {
     }
   }
 
-  // Métodos HTTP
+  // Métodos HTTP con tipos genéricos
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.instance.get(url, config);
+    return this.instance.get<T>(url, config);
   }
 
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.instance.post(url, data, config);
+    return this.instance.post<T>(url, data, config);
   }
 
   async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.instance.put(url, data, config);
+    return this.instance.put<T>(url, data, config);
   }
 
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.instance.delete(url, config);
+    return this.instance.delete<T>(url, config);
   }
 
-  // Método para health check
+  // Método para health check con tipo específico
   async healthCheck(): Promise<boolean> {
     try {
-      const response = await this.get('/health');
-      return response.status === 200;
+      const response = await this.get<HealthCheckResponse>('/health');
+      return response.status === 200 && response.data.success;
     } catch (error) {
       console.error('❌ Health check failed:', error);
       return false;
     }
+  }
+
+  // Método auxiliar para manejar respuestas de error tipadas
+  handleApiError(error: any): never {
+    if (error.response?.data?.error) {
+      const apiError = error.response.data as ApiErrorResponse;
+      throw new Error(apiError.error.message || 'Error de la API');
+    }
+    
+    if (error.message) {
+      throw new Error(error.message);
+    }
+    
+    throw new Error('Error desconocido de la API');
   }
 }
 
