@@ -7,7 +7,7 @@ export const APP_CONFIG = {
 };
 
 export const API_CONFIG = {
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://18.116.163.27:3001/api',
   timeout: 30000,
   retries: 3
 };
