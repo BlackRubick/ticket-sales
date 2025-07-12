@@ -624,7 +624,7 @@ export const TicketList: React.FC = () => {
             <div
               className={`relative overflow-hidden bg-gradient-to-br ${getStatusColor(
                 selectedTicket.status
-              )} text-white p-6 sm:p-8 rounded-2xl shadow-2xl`}
+              )} text-black p-6 sm:p-8 rounded-2xl shadow-2xl`}
             >
               <div className="absolute inset-0 opacity-20">
                 <div
@@ -635,13 +635,13 @@ export const TicketList: React.FC = () => {
                 ></div>
               </div>
 
-              <div className="relative text-white">
+              <div className="relative text-black">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6">
                   <div className="mb-4 sm:mb-0">
                     <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-white">
                       {selectedTicket.eventName}
                     </h3>
-                    <p className="text-white/80 text-base sm:text-lg">
+                    <p className="text-black/80 text-base sm:text-lg">
                       {selectedTicket.eventLocation}
                     </p>
                   </div>
@@ -652,10 +652,10 @@ export const TicketList: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
                   <div>
-                    <p className="text-white/60 text-sm mb-1">
+                    <p className="text-black/60 text-sm mb-1">
                       Fecha del Evento
                     </p>
-                    <p className="font-semibold text-base sm:text-lg text-white">
+                    <p className="font-semibold text-base sm:text-lg text-black">
                       {new Date(selectedTicket.eventDate).toLocaleDateString(
                         "es-MX",
                         {
@@ -670,19 +670,19 @@ export const TicketList: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-white/60 text-sm mb-1">Precio</p>
+                    <p className="text-black/60 text-sm mb-1">Precio</p>
                     <p className="font-semibold text-base sm:text-lg text-white">
                       ${selectedTicket.price}
                     </p>
                   </div>
                   <div>
-                    <p className="text-white/60 text-sm mb-1">Comprador</p>
+                    <p className="text-black/60 text-sm mb-1">Comprador</p>
                     <p className="font-semibold text-sm sm:text-base text-white">
                       {selectedTicket.buyerName}
                     </p>
                   </div>
                   <div>
-                    <p className="text-white/60 text-sm mb-1">Boleto #</p>
+                    <p className="text-black/60 text-sm mb-1">Boleto #</p>
                     <p className="font-semibold font-mono text-sm sm:text-base text-white">
                       {selectedTicket.ticketNumber}
                     </p>
