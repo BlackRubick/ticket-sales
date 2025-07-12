@@ -638,7 +638,7 @@ export const TicketList: React.FC = () => {
               <div className="relative text-black">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6">
                   <div className="mb-4 sm:mb-0">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-white">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-black">
                       {selectedTicket.eventName}
                     </h3>
                     <p className="text-black/80 text-base sm:text-lg">
