@@ -81,6 +81,72 @@ export const useQRScanner = () => {
     }
   };
 
+  // 🎯 NUEVA FUNCIÓN - Detectar QR automáticamente
+  const detectMockQR = (): string | null => {
+    // Simulación para pruebas - genera códigos cada 5 segundos
+    const now = Date.now();
+    const lastDetection = (window as any).lastQRDetection || 0;
+    
+    if (now - lastDetection > 5000) { // Cada 5 segundos
+      (window as any).lastQRDetection = now;
+      
+      // Códigos de prueba
+      const testCodes = [
+        'NEBULA-123-abc456',
+        'NEBULA-456-def789',
+        'NEBULA-789-ghi012'
+      ];
+      
+      return testCodes[Math.floor(Math.random() * testCodes.length)];
+    }
+    
+    return null;
+  };
+
+  // 🎯 NUEVA FUNCIÓN - Iniciar detección de QR
+  const startQRDetection = useCallback(() => {
+    if (!videoRef.current || !isScanning) return;
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    const detectQR = () => {
+      if (!videoRef.current || !isScanning || !context) return;
+      
+      const video = videoRef.current;
+      
+      // Solo procesar si el video tiene datos
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Dibujar el frame actual del video en el canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Detectar QR (por ahora mock, luego se puede cambiar por jsQR)
+        try {
+          const qrCode = detectMockQR();
+          
+          if (qrCode) {
+            console.log('🎯 QR Code detectado:', qrCode);
+            scanTicket(qrCode);
+            return; // Detener la detección después de encontrar uno
+          }
+        } catch (err) {
+          console.warn('Error en detección QR:', err);
+        }
+      }
+      
+      // Continuar detectando si está escaneando
+      if (isScanning) {
+        scanIntervalRef.current = window.requestAnimationFrame(detectQR);
+      }
+    };
+    
+    // Iniciar la detección
+    detectQR();
+  }, [isScanning]);
+
   const startScanning = useCallback(async () => {
     try {
       setError(null);
@@ -177,6 +243,12 @@ export const useQRScanner = () => {
               console.log('▶️ Video iniciado correctamente');
               setIsScanning(true);
               setCameraPermission('granted');
+              
+              // 🎯 AGREGAR ESTO - Iniciar detección de QR después de 1 segundo
+              setTimeout(() => {
+                startQRDetection();
+              }, 1000);
+              
               resolve();
             })
             .catch((playError) => {
@@ -214,6 +286,12 @@ export const useQRScanner = () => {
               .then(() => {
                 setIsScanning(true);
                 setCameraPermission('granted');
+                
+                // 🎯 TAMBIÉN AQUÍ - Iniciar detección de QR
+                setTimeout(() => {
+                  startQRDetection();
+                }, 1000);
+                
                 resolve();
               })
               .catch(() => {
@@ -242,14 +320,14 @@ export const useQRScanner = () => {
       }
       setIsScanning(false);
     }
-  }, [currentCameraId]);
+  }, [currentCameraId, startQRDetection]);
 
   const stopScanning = useCallback(() => {
     console.log('🛑 Deteniendo escáner...');
     
-    // Detener el intervalo de escaneo
+    // 🎯 CAMBIAR ESTO - Detener requestAnimationFrame en lugar de interval
     if (scanIntervalRef.current) {
-      clearInterval(scanIntervalRef.current);
+      window.cancelAnimationFrame(scanIntervalRef.current);
       scanIntervalRef.current = null;
     }
 
