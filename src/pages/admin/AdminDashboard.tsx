@@ -34,12 +34,12 @@ useEffect(() => {
       const data = await adminService.getDashboardStats();
       console.log("✅ Stats cargadas:", data);
       setStats(data);
-    } catch (error) {
+    } catch (error: any) {  // ✅ Agregar ': any'
       console.error("❌ Error fetching stats:", error);
-      // AGREGADO: Mostrar el error en consola
+      // ✅ Ahora funciona
       console.error("Error completo:", {
-        message: error.message,
-        stack: error.stack,
+        message: error?.message || 'Error desconocido',
+        stack: error?.stack || 'Sin stack trace',
         error
       });
     } finally {
