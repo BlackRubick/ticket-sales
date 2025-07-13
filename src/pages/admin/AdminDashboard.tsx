@@ -10,21 +10,45 @@ export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState("today");
+console.log("🔍 DEBUG Dashboard - Estado actual:");
+console.log("stats:", stats);
+console.log("loading:", loading);
+console.log("stats?.recentTickets:", stats?.recentTickets);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const data = await adminService.getDashboardStats();
-        setStats(data);
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+if (stats?.recentTickets) {
+  console.log("📊 Datos de tickets:");
+  stats.recentTickets.forEach((ticket, index) => {
+    console.log(`Ticket ${index + 1}:`, {
+      id: ticket.id,
+      ticketNumber: ticket.ticketNumber,
+      eventName: ticket.eventName,
+      buyerName: ticket.buyerName,
+      status: ticket.status
+    });
+  });
+}
+useEffect(() => {
+  const fetchStats = async () => {
+    try {
+      console.log("🚀 Iniciando carga de stats...");
+      const data = await adminService.getDashboardStats();
+      console.log("✅ Stats cargadas:", data);
+      setStats(data);
+    } catch (error) {
+      console.error("❌ Error fetching stats:", error);
+      // AGREGADO: Mostrar el error en consola
+      console.error("Error completo:", {
+        message: error.message,
+        stack: error.stack,
+        error
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchStats();
-  }, []);
+  fetchStats();
+}, []);
 
   if (loading) {
     return (
@@ -336,6 +360,30 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="overflow-x-auto">
+                {import.meta.env.DEV && (
+  <div className="bg-yellow-50 border border-yellow-200 p-4 mb-4 rounded-lg">
+    <h4 className="font-bold text-yellow-800 mb-2">🐛 DEBUG MODE</h4>
+    <div className="text-sm text-yellow-700 space-y-1">
+      <p><strong>Loading:</strong> {loading ? 'true' : 'false'}</p>
+      <p><strong>Stats exists:</strong> {stats ? 'true' : 'false'}</p>
+      <p><strong>Recent tickets count:</strong> {stats?.recentTickets?.length || 0}</p>
+      
+      {stats?.recentTickets && stats.recentTickets.length > 0 && (
+        <div className="mt-2">
+          <p><strong>Primer ticket:</strong></p>
+          <div className="bg-yellow-100 p-2 rounded text-xs">
+            <p>• ID: {stats.recentTickets[0].id}</p>
+            <p>• Número: {stats.recentTickets[0].ticketNumber}</p>
+            <p>• Evento: {stats.recentTickets[0].eventName || 'UNDEFINED'}</p>
+            <p>• Comprador: {stats.recentTickets[0].buyerName || 'UNDEFINED'}</p>
+            <p>• Precio: {stats.recentTickets[0].price}</p>
+            <p>• Estado: {stats.recentTickets[0].status}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+)}
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
@@ -446,7 +494,7 @@ export const AdminDashboard: React.FC = () => {
                       ).toFixed(1)}
                       %
                     </span>
-                  </div>
+                  </div>pero igual si estoy en mi pc no salen los datos xd  
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-cyan-600 h-2 rounded-full"
