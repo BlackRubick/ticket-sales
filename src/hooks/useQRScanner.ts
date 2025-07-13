@@ -411,7 +411,7 @@ export const useQRScanner = () => {
       stopScanning();
     };
   }, [stopScanning]);
-
+//arreglando bug xd 
   return {
     isScanning,
     scanResult,
