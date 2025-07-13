@@ -49,3 +49,6 @@ export const getAllowedRoutesForRole = (role: UserRole): string[] => {
 };
 
 
+
+export type { UserRole };
+

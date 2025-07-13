@@ -1,4 +1,3 @@
-// src/components/ui/RoleBadge.tsx
 import React from 'react';
 import { ROLE_DESCRIPTIONS } from '../constants/roles';
 import type { UserRole } from '../utils/roleUtils';
