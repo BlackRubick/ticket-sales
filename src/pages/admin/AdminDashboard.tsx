@@ -374,9 +374,7 @@ useEffect(() => {
                   <h3 className="text-xl font-bold text-gray-900">
                     Boletos Recientes
                   </h3>
-                  <Button variant="secondary" size="sm">
-                    Ver Todos
-                  </Button>
+
                 </div>
               </div>
 
