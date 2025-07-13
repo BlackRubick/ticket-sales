@@ -75,7 +75,7 @@ export const QRScanner: React.FC = () => {
     startScanning();
   };
 
-  // ✅ FUNCIÓN: Marcar boleto como usado - ACTUALIZADA
+  // ✅ FUNCIÓN: Marcar boleto como usado - CORREGIDA PARA MANTENER isValid
   const handleMarkAsUsed = async () => {
     if (!currentResult?.ticket?.id || !currentResult.isValid) return;
 
@@ -85,9 +85,10 @@ export const QRScanner: React.FC = () => {
       
       await markTicketAsUsed(currentResult.ticket.id);
       
-      // Actualizar el resultado actual
+      // ✅ MANTENER isValid: true incluso cuando está "used"
       const updatedResult: TicketScanResult = {
         ...currentResult,
+        isValid: true, // ✅ MANTENER COMO VÁLIDO
         ticket: {
           ...currentResult.ticket,
           status: 'used' as const,
@@ -795,7 +796,7 @@ export const QRScanner: React.FC = () => {
                 usedAt: {currentResult.ticket.usedAt ? 'SI' : 'NO'}
               </div>
 
-              {/* Botón: Marcar como Usado (solo si está activo) */}
+              {/* Botón: Marcar como Usado (solo si está activo Y válido) */}
               {currentResult.isValid && currentResult.ticket.status === 'active' && (
                 <Button
                   variant="success"
@@ -829,8 +830,8 @@ export const QRScanner: React.FC = () => {
                 </Button>
               )}
 
-              {/* Botón: Reactivar Boleto (solo si está usado) */}
-              {currentResult.isValid && currentResult.ticket.status === 'used' && (
+              {/* ✅ Botón: Reactivar Boleto - CONDICIÓN CORREGIDA */}
+              {(currentResult.isValid || currentResult.ticket.status === 'used') && currentResult.ticket.status === 'used' && (
                 <Button
                   variant="secondary"
                   onClick={handleReactivateTicket}
