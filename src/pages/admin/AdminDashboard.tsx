@@ -32,21 +32,35 @@ useEffect(() => {
     try {
       const data = await adminService.getDashboardStats();
       
-      // ✅ MAPEO RÁPIDO - convierte snake_case a camelCase
+      // ✅ MAPEO CORRECTO - accede a las propiedades originales con underscore
       const mappedStats = {
         ...data,
-        recentTickets: data.recentTickets?.map(ticket => ({
+        recentTickets: data.recentTickets?.map((ticket: any) => ({
           ...ticket,
-          ticketNumber: ticket.ticketNumber || ticket.ticketNumber,
-          eventName: ticket.eventName || ticket.eventName,
-          eventLocation: ticket.eventLocation || ticket.eventLocation,
-          buyerName: ticket.buyerName || ticket.buyerName,
-          buyerEmail: ticket.buyerEmail || ticket.buyerEmail,
-          buyerPhone: ticket.buyerPhone || ticket.buyerPhone,
-          qrCode: ticket.qrCode || ticket.qrCode
+          // ✅ Acceder a ticket.ticket_number (con underscore)
+          ticketNumber: ticket.ticket_number || ticket.ticketNumber,
+          // ✅ Acceder a ticket.event_name (con underscore)  
+          eventName: ticket.event_name || ticket.eventName,
+          // ✅ Acceder a ticket.event_location (con underscore)
+          eventLocation: ticket.event_location || ticket.eventLocation,
+          // ✅ Acceder a ticket.buyer_name (con underscore)
+          buyerName: ticket.buyer_name || ticket.buyerName,
+          // ✅ Acceder a ticket.buyer_email (con underscore)
+          buyerEmail: ticket.buyer_email || ticket.buyerEmail,
+          // ✅ Acceder a ticket.buyer_phone (con underscore)
+          buyerPhone: ticket.buyer_phone || ticket.buyerPhone,
+          // ✅ Acceder a ticket.qr_code (con underscore)
+          qrCode: ticket.qr_code || ticket.qrCode,
+          // ✅ Convertir fechas
+          eventDate: new Date(ticket.event_date || ticket.eventDate),
+          createdAt: new Date(ticket.created_at || ticket.createdAt),
+          updatedAt: new Date(ticket.updated_at || ticket.updatedAt),
+          usedAt: ticket.used_at ? new Date(ticket.used_at) : ticket.usedAt
         })) || []
       };
       
+      console.log("✅ Stats mapeadas correctamente:", mappedStats);
+      console.log("🎫 Primer ticket mapeado:", mappedStats.recentTickets[0]);
       setStats(mappedStats);
     } catch (error) {
       console.error("❌ Error fetching stats:", error);
