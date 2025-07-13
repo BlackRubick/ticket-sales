@@ -113,7 +113,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="mb-8 lg:mb-0">
                 <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4">
-                  Dashboard 
+                  Dashboard
                   <span className="block text-2xl lg:text-3xl font-normal text-blue-100 mt-2">
                     Panel de Control
                   </span>
@@ -208,7 +208,11 @@ export const AdminDashboard: React.FC = () => {
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <span className="text-blue-200 text-sm font-medium bg-blue-700 px-2 py-1 rounded">
@@ -216,9 +220,11 @@ export const AdminDashboard: React.FC = () => {
                 </span>
               </div>
               <div className="text-3xl font-bold mb-1 text-white">
-                {stats?.totalTickets?.toLocaleString() || '0'}
+                {stats?.totalTickets?.toLocaleString() || "0"}
               </div>
-              <div className="text-blue-200 text-sm font-medium">Total Boletos</div>
+              <div className="text-blue-200 text-sm font-medium">
+                Total Boletos
+              </div>
             </div>
 
             {/* Active Tickets */}
@@ -232,7 +238,11 @@ export const AdminDashboard: React.FC = () => {
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <span className="text-green-200 text-sm font-medium bg-green-700 px-2 py-1 rounded">
@@ -240,9 +250,11 @@ export const AdminDashboard: React.FC = () => {
                 </span>
               </div>
               <div className="text-3xl font-bold mb-1 text-white">
-                {stats?.activeTickets?.toLocaleString() || '0'}
+                {stats?.activeTickets?.toLocaleString() || "0"}
               </div>
-              <div className="text-green-200 text-sm font-medium">Boletos Activos</div>
+              <div className="text-green-200 text-sm font-medium">
+                Boletos Activos
+              </div>
             </div>
 
             {/* Revenue */}
@@ -256,7 +268,11 @@ export const AdminDashboard: React.FC = () => {
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                    />
                   </svg>
                 </div>
                 <span className="text-purple-200 text-sm font-medium bg-purple-700 px-2 py-1 rounded">
@@ -264,9 +280,11 @@ export const AdminDashboard: React.FC = () => {
                 </span>
               </div>
               <div className="text-3xl font-bold mb-1 text-white">
-                ${stats?.totalRevenue?.toLocaleString() || '0'}
+                ${stats?.totalRevenue?.toLocaleString() || "0"}
               </div>
-              <div className="text-purple-200 text-sm font-medium">Ingresos Totales</div>
+              <div className="text-purple-200 text-sm font-medium">
+                Ingresos Totales
+              </div>
             </div>
 
             {/* Today's Sales */}
@@ -280,7 +298,11 @@ export const AdminDashboard: React.FC = () => {
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                 </div>
                 <span className="text-orange-200 text-sm font-medium bg-orange-700 px-2 py-1 rounded">
@@ -288,9 +310,11 @@ export const AdminDashboard: React.FC = () => {
                 </span>
               </div>
               <div className="text-3xl font-bold mb-1 text-white">
-                {stats?.todaysSales?.toLocaleString() || '0'}
+                {stats?.todaysSales?.toLocaleString() || "0"}
               </div>
-              <div className="text-orange-200 text-sm font-medium">Ventas Hoy</div>
+              <div className="text-orange-200 text-sm font-medium">
+                Ventas Hoy
+              </div>
             </div>
           </div>
         </div>
@@ -318,10 +342,10 @@ export const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Boleto
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Evento
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Comprador
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -342,11 +366,8 @@ export const AdminDashboard: React.FC = () => {
                           <div className="text-sm font-medium text-gray-900">
                             {ticket.ticketNumber}
                           </div>
-                          <div className="text-sm text-gray-500 sm:hidden">
-                            {ticket.eventName}
-                          </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
                             {ticket.eventName}
                           </div>
@@ -354,7 +375,7 @@ export const AdminDashboard: React.FC = () => {
                             {ticket.eventLocation}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
                             {ticket.buyerName}
                           </div>
