@@ -858,7 +858,6 @@ export const QRScanner: React.FC = () => {
                         await reactivateTicket(currentResult.ticket.id);
                         alert('✅ Boleto reactivado correctamente en la base de datos');
                       } else {
-                        alert('✅ Boleto reactivado (solo UI - falta conectar API)');
                       }
                     } catch (error: any) {
                       alert(`Error: ${error.message}`);
@@ -883,30 +882,6 @@ export const QRScanner: React.FC = () => {
                 </Button>
               )}
 
-              {/* 🔥 BOTÓN DE PRUEBA TEMPORAL - Para probar la funcionalidad */}
-              {currentResult.isValid && (
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    // Simular cambio de estado para testing
-                    const newStatus = currentResult.ticket.status === 'active' ? 'used' : 'active';
-                    const updatedResult = {
-                      ...currentResult,
-                      ticket: {
-                        ...currentResult.ticket,
-                        status: newStatus as 'active' | 'used',
-                        usedAt: newStatus === 'used' ? new Date() : undefined
-                      }
-                    };
-                    setCurrentResult(updatedResult);
-                  }}
-                  className="flex-1 sm:flex-none !bg-purple-600 hover:!bg-purple-700 !text-white"
-                >
-                  🧪 TEST: Cambiar Estado
-                  <br />
-                  <small>({currentResult.ticket.status} → {currentResult.ticket.status === 'active' ? 'used' : 'active'})</small>
-                </Button>
-              )}
             </div>
           </div>
         )}
