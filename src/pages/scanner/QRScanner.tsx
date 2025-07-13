@@ -788,13 +788,7 @@ export const QRScanner: React.FC = () => {
                 Escanear Otro
               </Button>
 
-              {/* 🔍 DEBUG: Mostrar info del estado actual */}
-              <div className="text-xs text-gray-500 p-2 bg-gray-100 rounded">
-                <strong>DEBUG:</strong><br/>
-                isValid: {currentResult.isValid ? 'true' : 'false'}<br/>
-                status: "{currentResult.ticket.status}"<br/>
-                usedAt: {currentResult.ticket.usedAt ? 'SI' : 'NO'}
-              </div>
+
 
               {/* Botón: Marcar como Usado (solo si está activo Y válido) */}
               {currentResult.isValid && currentResult.ticket.status === 'active' && (
