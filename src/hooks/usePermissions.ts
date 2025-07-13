@@ -1,5 +1,6 @@
 // src/hooks/usePermissions.ts
 import { useAuth } from '../context/AuthContext';
+import { ROLE_PERMISSIONS } from '../constants/roles';
 
 interface Permissions {
   canViewDashboard: boolean;
@@ -16,7 +17,8 @@ interface Permissions {
 export const usePermissions = (): Permissions => {
   const { user } = useAuth();
 
-  if (!user) {
+  // Si no hay usuario, devolver permisos vacíos
+  if (!user || !user.role) {
     return {
       canViewDashboard: false,
       canViewSales: false,
@@ -30,59 +32,29 @@ export const usePermissions = (): Permissions => {
     };
   }
 
-  // Definir permisos según el rol
-  switch (user.role) {
-    case 'admin':
-      return {
-        canViewDashboard: true,
-        canViewSales: true,
-        canViewScanner: true,
-        canViewTickets: true,
-        canViewTicketResend: true,
-        canAccessAdmin: true,
-        canManageUsers: true,
-        canViewReports: true,
-        canExportData: true,
-      };
-
-    case 'sales':
-      return {
-        canViewDashboard: false,
-        canViewSales: true,
-        canViewScanner: false,
-        canViewTickets: false,
-        canViewTicketResend: false,
-        canAccessAdmin: false,
-        canManageUsers: false,
-        canViewReports: false,
-        canExportData: false,
-      };
-
-    case 'scanner':
-      return {
-        canViewDashboard: false,
-        canViewSales: false,
-        canViewScanner: true,
-        canViewTickets: false,
-        canViewTicketResend: false,
-        canAccessAdmin: false,
-        canManageUsers: false,
-        canViewReports: false,
-        canExportData: false,
-      };
-
-    default:
-      // Fallback para roles desconocidos - sin permisos
-      return {
-        canViewDashboard: false,
-        canViewSales: false,
-        canViewScanner: false,
-        canViewTickets: false,
-        canViewTicketResend: false,
-        canAccessAdmin: false,
-        canManageUsers: false,
-        canViewReports: false,
-        canExportData: false,
-      };
+  // Obtener permisos del rol desde la configuración
+  const rolePermissions = ROLE_PERMISSIONS[user.role];
+  
+  // Si el rol no existe en la configuración, devolver permisos vacíos
+  if (!rolePermissions) {
+    console.warn(`⚠️ Rol '${user.role}' no encontrado en ROLE_PERMISSIONS`);
+    return {
+      canViewDashboard: false,
+      canViewSales: false,
+      canViewScanner: false,
+      canViewTickets: false,
+      canViewTicketResend: false,
+      canAccessAdmin: false,
+      canManageUsers: false,
+      canViewReports: false,
+      canExportData: false,
+    };
   }
+
+  // Log para debugging en desarrollo
+  if (import.meta.env.DEV) {
+    console.log(`🔐 Permisos para ${user.name} (${user.role}):`, rolePermissions);
+  }
+
+  return rolePermissions;
 };

@@ -13,11 +13,17 @@ import { Navbar } from './components/common/Navbar';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Alert } from './components/ui/Alert';
 import { apiClient } from './config/api';
+import { usePermissions } from './hooks/usePermissions';
+import { getDefaultRouteForRole } from './utils/roleUtils';
 import './App.css';
 
-// Protected Route Component
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// Protected Route Component - Verifica autenticación Y permisos
+const ProtectedRoute: React.FC<{ 
+  children: React.ReactNode;
+  requiredPermission: keyof ReturnType<typeof usePermissions>;
+}> = ({ children, requiredPermission }) => {
   const { user, isLoading } = useAuth();
+  const permissions = usePermissions();
 
   if (isLoading) {
     return (
@@ -31,10 +37,17 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <Navigate to="/login" replace />;
   }
 
+  // Verificar si el usuario tiene el permiso requerido
+  if (!permissions[requiredPermission]) {
+    // Redirigir a la ruta por defecto del rol del usuario
+    const defaultRoute = getDefaultRouteForRole(user.role);
+    return <Navigate to={defaultRoute} replace />;
+  }
+
   return <>{children}</>;
 };
 
-// Public Route Component (redirects to dashboard if already authenticated)
+// Public Route Component (redirects to default route based on role if already authenticated)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isLoading } = useAuth();
 
@@ -47,7 +60,9 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
 
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    // Redirigir a la ruta por defecto según el rol
+    const defaultRoute = getDefaultRouteForRole(user.role);
+    return <Navigate to={defaultRoute} replace />;
   }
 
   return <>{children}</>;
@@ -128,6 +143,18 @@ const ApiHealthCheck: React.FC<{ children: React.ReactNode }> = ({ children }) =
   );
 };
 
+// Componente para redirigir a la ruta por defecto basada en el rol
+const RoleBasedRedirect: React.FC = () => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  const defaultRoute = getDefaultRouteForRole(user.role);
+  return <Navigate to={defaultRoute} replace />;
+};
+
 function AppRoutes() {
   return (
     <Routes>
@@ -138,49 +165,55 @@ function AppRoutes() {
         </PublicRoute>
       } />
 
-      {/* Protected Routes */}
+      {/* Protected Routes with Role-based Access Control */}
+      
+      {/* Dashboard - Solo Admin */}
       <Route path="/dashboard" element={
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewDashboard">
           <AppLayout>
             <AdminDashboard />
           </AppLayout>
         </ProtectedRoute>
       } />
 
+      {/* Sales - Admin y Sales */}
       <Route path="/sales" element={
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewSales">
           <AppLayout>
             <TicketSales />
           </AppLayout>
         </ProtectedRoute>
       } />
 
+      {/* Scanner - Admin y Scanner */}
       <Route path="/scanner" element={
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewScanner">
           <AppLayout>
             <QRScanner />
           </AppLayout>
         </ProtectedRoute>
       } />
 
+      {/* Tickets List - Solo Admin */}
       <Route path="/tickets" element={
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewTickets">
           <AppLayout>
             <TicketList />
           </AppLayout>
         </ProtectedRoute>
       } />
 
+      {/* Resend Ticket - Solo Admin */}
       <Route path="/tickets/resend" element={
-        <ProtectedRoute>
+        <ProtectedRoute requiredPermission="canViewTicketResend">
           <AppLayout>
             <ResendTicket />
           </AppLayout>
         </ProtectedRoute>
       } />
 
-      {/* Default redirect */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      {/* Default redirect - Redirige según el rol */}
+      <Route path="/" element={<RoleBasedRedirect />} />
       
       {/* 404 fallback */}
       <Route path="*" element={
@@ -202,26 +235,8 @@ function AppRoutes() {
               </svg>
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-            <p className="text-gray-600 mb-6">Página no encontrada</p>
-            <a 
-              href="/dashboard" 
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
-              Volver al inicio
-            </a>
+            <p className="text-gray-600 mb-6">Página no encontrada o no tienes permisos para acceder</p>
+            <RoleBasedRedirect />
           </div>
         </div>
       } />
