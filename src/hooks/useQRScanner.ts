@@ -1,4 +1,4 @@
-// src/hooks/useQRScanner.ts - FUNCIONA CON QR REALES usando ZXing CDN
+// src/hooks/useQRScanner.ts - COMPLETO Y CORREGIDO
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { type TicketScanResult } from '../types/ticket';
 import { qrService } from '../services/qrService';
@@ -54,7 +54,7 @@ export const useQRScanner = () => {
       stopScanning();
     };
   }, []);
- console.log("si se hizo el commit xd")
+
   const checkCameraPermission = async () => {
     try {
       const permissionStatus = await navigator.permissions.query({ name: 'camera' as PermissionName });
@@ -240,6 +240,38 @@ export const useQRScanner = () => {
     }
   };
 
+  // 🎯 NUEVA FUNCIÓN: Marcar boleto como usado
+  const markTicketAsUsed = async (ticketId: string) => {
+    try {
+      console.log('🔄 Marcando ticket como usado:', ticketId);
+      
+      // 🎯 LLAMADA REAL A TU API
+      const token = localStorage.getItem('nebula_auth_token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://venta-nebula.ddns.net/api';
+      
+      const response = await fetch(`${apiUrl}/tickets/${ticketId}/mark-used`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Error marcando boleto como usado');
+      }
+      
+      const result = await response.json();
+      console.log('✅ Ticket marcado como usado:', result);
+      
+      return result;
+    } catch (error: any) {
+      console.error('❌ Error en markTicketAsUsed:', error);
+      throw error;
+    }
+  };
+
   return {
     // Estado
     isScanning,
@@ -258,6 +290,7 @@ export const useQRScanner = () => {
     stopScanning,
     switchCamera,
     scanTicket,
+    markTicketAsUsed, // ✅ NUEVA FUNCIÓN AGREGADA
     
     // Utilidades
     canSwitchCamera: availableCameras.length > 1,

@@ -17,6 +17,7 @@ export const QRScanner: React.FC = () => {
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [currentResult, setCurrentResult] = useState<TicketScanResult | null>(null);
   const [scanCount, setScanCount] = useState({ valid: 0, invalid: 0 });
+  const [isMarkingAsUsed, setIsMarkingAsUsed] = useState(false);
 
   const {
     isScanning,
@@ -30,6 +31,7 @@ export const QRScanner: React.FC = () => {
     stopScanning,
     switchCamera,
     scanTicket,
+    markTicketAsUsed, // ✅ Ahora incluimos la nueva función
     canSwitchCamera,
   } = useQRScanner();
 
@@ -69,6 +71,45 @@ export const QRScanner: React.FC = () => {
     setShowResultModal(false);
     setCurrentResult(null);
     startScanning();
+  };
+
+  // ✅ NUEVA FUNCIÓN: Marcar boleto como usado
+  const handleMarkAsUsed = async () => {
+    if (!currentResult?.ticket?.id || !currentResult.isValid) return;
+
+    setIsMarkingAsUsed(true);
+    try {
+      console.log('🔄 Iniciando proceso para marcar como usado:', currentResult.ticket.id);
+      
+      await markTicketAsUsed(currentResult.ticket.id);
+      
+      // Actualizar el resultado actual - manteniendo tipos correctos
+      const updatedResult: TicketScanResult = {
+        ...currentResult,
+        ticket: {
+          ...currentResult.ticket,
+          status: 'used' as const,
+          usedAt: new Date() // ✅ Usando Date object como en tu interface
+        }
+      };
+      
+      setCurrentResult(updatedResult);
+      
+      // Actualizar el historial
+      setScanHistory((prev) => 
+        prev.map((scan, index) => 
+          index === 0 ? updatedResult : scan
+        )
+      );
+      
+      console.log('✅ Boleto marcado como usado exitosamente');
+      
+    } catch (error: any) {
+      console.error('❌ Error al marcar boleto como usado:', error);
+      alert(`Error: ${error.message || 'No se pudo marcar el boleto como usado'}`);
+    } finally {
+      setIsMarkingAsUsed(false);
+    }
   };
 
   const clearHistory = () => {
@@ -135,7 +176,7 @@ export const QRScanner: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        {/* Error Alert con botón de diagnóstico */}
+        {/* Error Alert */}
         {error && (
           <div className="mb-8">
             <div className="bg-red-50 border border-red-200 rounded-xl p-4">
@@ -253,58 +294,55 @@ export const QRScanner: React.FC = () => {
               )}
             </div>
 
-<div className="relative">
-  <div className="aspect-square bg-gray-900 overflow-hidden relative">
-    {/* VIDEO SIEMPRE PRESENTE - NO CONDICIONAL */}
-    <video
-      ref={videoRef}
-      autoPlay
-      playsInline
-      muted
-      className="w-full h-full object-cover"
-      style={{ display: isScanning ? 'block' : 'none' }}
-    />
-    
-    {/* Contenido cuando NO está escaneando */}
-    {!isScanning && (
-      <div className="absolute inset-0 flex items-center justify-center h-full text-gray-400">
-        <div className="text-center">
-          <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-2xl flex items-center justify-center">
-            <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          <h4 className="text-lg font-medium text-gray-900 mb-2">Cámara Desactivada</h4>
-          <p className="text-gray-600 mb-4">Haz clic en "Iniciar Cámara" para comenzar a escanear</p>
-          <Button onClick={startScanning} variant="light" size="sm">
-            Activar Cámara
-          </Button>
-        </div>
-      </div>
-    )}
-    
-    {/* Scanner Overlay cuando SÍ está escaneando */}
-    {isScanning && (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative">
-          <div className="w-64 h-64 border-4 border-cyan-500 rounded-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-2xl"></div>
-            <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-2xl"></div>
-            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-2xl"></div>
-            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-2xl"></div>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse"></div>
-          </div>
-          <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 w-80">
-            <div className="bg-black/80 backdrop-blur-sm text-white text-center py-3 px-6 rounded-2xl">
-              <p className="text-sm font-medium">Coloca el código QR dentro del marco</p>
+            <div className="relative">
+              <div className="aspect-square bg-gray-900 overflow-hidden relative">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                  style={{ display: isScanning ? 'block' : 'none' }}
+                />
+                
+                {!isScanning && (
+                  <div className="absolute inset-0 flex items-center justify-center h-full text-gray-400">
+                    <div className="text-center">
+                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-2xl flex items-center justify-center">
+                        <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">Cámara Desactivada</h4>
+                      <p className="text-gray-600 mb-4">Haz clic en "Iniciar Cámara" para comenzar a escanear</p>
+                      <Button onClick={startScanning} variant="light" size="sm">
+                        Activar Cámara
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
+                {isScanning && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative">
+                      <div className="w-64 h-64 border-4 border-cyan-500 rounded-2xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-2xl"></div>
+                        <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-2xl"></div>
+                        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-2xl"></div>
+                        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-2xl"></div>
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse"></div>
+                      </div>
+                      <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 w-80">
+                        <div className="bg-black/80 backdrop-blur-sm text-white text-center py-3 px-6 rounded-2xl">
+                          <p className="text-sm font-medium">Coloca el código QR dentro del marco</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    )}
-  </div>
-</div>
 
             <div className="p-6 bg-gray-50">
               <div className="flex items-center justify-between">
@@ -522,7 +560,7 @@ export const QRScanner: React.FC = () => {
                 {currentResult.message}
               </p>
 
-              {currentResult.isValid && (
+              {currentResult.isValid && currentResult.ticket.status === 'active' && (
                 <div className="inline-flex items-center px-4 py-2 bg-green-50 text-green-800 rounded-full text-sm font-medium">
                   <svg
                     className="h-4 w-4 mr-2"
@@ -700,29 +738,37 @@ export const QRScanner: React.FC = () => {
                 Escanear Otro
               </Button>
 
-              {currentResult.isValid && (
+              {/* ✅ BOTÓN ACTUALIZADO: Marcar como Usado */}
+              {currentResult.isValid && currentResult.ticket.status === 'active' && (
                 <Button
                   variant="success"
-                  onClick={() => {
-                    // Mark ticket as used logic would go here
-                    setShowResultModal(false);
-                  }}
+                  onClick={handleMarkAsUsed}
+                  disabled={isMarkingAsUsed}
                   className="flex-1 sm:flex-none !bg-green-600 hover:!bg-green-700"
                 >
-                  <svg
-                    className="h-5 w-5 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Marcar como Usado
+                  {isMarkingAsUsed ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Procesando...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Marcar como Usado
+                    </>
+                  )}
                 </Button>
               )}
             </div>
