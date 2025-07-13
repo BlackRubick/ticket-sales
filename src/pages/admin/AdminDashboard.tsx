@@ -10,21 +10,10 @@ export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState("today");
-console.log("🔍 DEBUG Dashboard - Estado actual:");
-console.log("stats:", stats);
-console.log("loading:", loading);
-console.log("stats?.recentTickets:", stats?.recentTickets);
+
 
 if (stats?.recentTickets) {
-  console.log("📊 Datos de tickets:");
   stats.recentTickets.forEach((ticket, index) => {
-    console.log(`Ticket ${index + 1}:`, {
-      id: ticket.id,
-      ticketNumber: ticket.ticketNumber,
-      eventName: ticket.eventName,
-      buyerName: ticket.buyerName,
-      status: ticket.status
-    });
   });
 }
 useEffect(() => {
@@ -59,8 +48,7 @@ useEffect(() => {
         })) || []
       };
       
-      console.log("✅ Stats mapeadas correctamente:", mappedStats);
-      console.log("🎫 Primer ticket mapeado:", mappedStats.recentTickets[0]);
+
       setStats(mappedStats);
     } catch (error) {
       console.error("❌ Error fetching stats:", error);

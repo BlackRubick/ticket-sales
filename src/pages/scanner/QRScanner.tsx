@@ -81,7 +81,6 @@ export const QRScanner: React.FC = () => {
 
     setIsMarkingAsUsed(true);
     try {
-      console.log('🔄 Iniciando proceso para marcar como usado:', currentResult.ticket.id);
       
       await markTicketAsUsed(currentResult.ticket.id);
       
@@ -105,7 +104,7 @@ export const QRScanner: React.FC = () => {
         )
       );
       
-      console.log('✅ Boleto marcado como usado exitosamente');
+      ('✅ Boleto marcado como usado exitosamente');
       
     } catch (error: any) {
       console.error('❌ Error al marcar boleto como usado:', error);
@@ -130,7 +129,6 @@ export const QRScanner: React.FC = () => {
 
     setIsReactivating(true);
     try {
-      console.log('🔄 Iniciando proceso para reactivar boleto:', currentResult.ticket.id);
       
       await reactivateTicket(currentResult.ticket.id);
       
@@ -151,7 +149,7 @@ export const QRScanner: React.FC = () => {
         )
       );
       
-      console.log('✅ Boleto reactivado exitosamente');
+      ('✅ Boleto reactivado exitosamente');
       alert('✅ Boleto reactivado correctamente. Ahora puede ser usado nuevamente.');
       
     } catch (error: any) {

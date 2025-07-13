@@ -133,7 +133,6 @@ export const TicketSales: React.FC = () => {
           text: `Tu boleto para ${generatedTicket.eventName} está listo. Número: ${generatedTicket.ticketNumber}`,
         });
       } catch (error) {
-        console.log('Error sharing:', error);
       }
     }
   };

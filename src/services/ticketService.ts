@@ -42,7 +42,6 @@ export const ticketService = {
 
       const url = `${API_ENDPOINTS.TICKETS.LIST}?${queryParams.toString()}`;
       
-      console.log('🚀 Fetching tickets from:', url);
       
       const response = await apiClient.get<{
         success: boolean;
@@ -58,13 +57,11 @@ export const ticketService = {
         error?: string;
       }>(url);
 
-      console.log('📦 Raw API response:', response.data);
 
       if (response.data.success && Array.isArray(response.data.data)) {
         // Mapear los datos de la API al formato del frontend
         const mappedTickets = response.data.data.map(mapApiTicketToTicket);
         
-        console.log('✅ Mapped tickets:', mappedTickets);
 
         return {
           data: mappedTickets,
@@ -120,7 +117,6 @@ export const ticketService = {
 
   async createTicket(ticketData: TicketFormData): Promise<ApiResponse<Ticket>> {
     try {
-      console.log('🎫 Creating ticket with data:', ticketData);
       
       const response = await apiClient.post<{
         success: boolean;
@@ -129,7 +125,6 @@ export const ticketService = {
         error?: string;
       }>(API_ENDPOINTS.TICKETS.CREATE, ticketData);
 
-      console.log('📦 Create ticket response:', response.data);
 
       if (response.data.success && response.data.data) {
         return {
