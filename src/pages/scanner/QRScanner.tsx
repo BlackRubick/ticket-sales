@@ -77,7 +77,7 @@ export const QRScanner: React.FC = () => {
 
   // ✅ FUNCIÓN: Marcar boleto como usado - CORREGIDA PARA MANTENER isValid
   const handleMarkAsUsed = async () => {
-if (!currentResult?.ticket?.id || currentResult.ticket.status !== 'used') return;
+    if (!currentResult?.ticket?.id || !currentResult.isValid) return;
 
     setIsMarkingAsUsed(true);
     try {
