@@ -18,6 +18,7 @@ export const QRScanner: React.FC = () => {
   const [currentResult, setCurrentResult] = useState<TicketScanResult | null>(null);
   const [scanCount, setScanCount] = useState({ valid: 0, invalid: 0 });
   const [isMarkingAsUsed, setIsMarkingAsUsed] = useState(false);
+  const [isReactivating, setIsReactivating] = useState(false);
 
   const {
     isScanning,
@@ -31,7 +32,8 @@ export const QRScanner: React.FC = () => {
     stopScanning,
     switchCamera,
     scanTicket,
-    markTicketAsUsed, // ✅ Ahora incluimos la nueva función
+    markTicketAsUsed,
+    reactivateTicket,
     canSwitchCamera,
   } = useQRScanner();
 
@@ -73,7 +75,7 @@ export const QRScanner: React.FC = () => {
     startScanning();
   };
 
-  // ✅ NUEVA FUNCIÓN: Marcar boleto como usado
+  // Marcar boleto como usado
   const handleMarkAsUsed = async () => {
     if (!currentResult?.ticket?.id || !currentResult.isValid) return;
 
@@ -83,19 +85,17 @@ export const QRScanner: React.FC = () => {
       
       await markTicketAsUsed(currentResult.ticket.id);
       
-      // Actualizar el resultado actual - manteniendo tipos correctos
       const updatedResult: TicketScanResult = {
         ...currentResult,
         ticket: {
           ...currentResult.ticket,
           status: 'used' as const,
-          usedAt: new Date() // ✅ Usando Date object como en tu interface
+          usedAt: new Date()
         }
       };
       
       setCurrentResult(updatedResult);
       
-      // Actualizar el historial
       setScanHistory((prev) => 
         prev.map((scan, index) => 
           index === 0 ? updatedResult : scan
@@ -109,6 +109,53 @@ export const QRScanner: React.FC = () => {
       alert(`Error: ${error.message || 'No se pudo marcar el boleto como usado'}`);
     } finally {
       setIsMarkingAsUsed(false);
+    }
+  };
+
+  // Reactivar boleto usado
+  const handleReactivateTicket = async () => {
+    if (!currentResult?.ticket?.id || !currentResult.isValid) return;
+
+    const confirmed = window.confirm(
+      `¿Estás seguro de que quieres reactivar este boleto?\n\n` +
+      `Boleto: ${currentResult.ticket.ticketNumber}\n` +
+      `Evento: ${currentResult.ticket.eventName}\n\n` +
+      `Esto permitirá que el boleto sea usado nuevamente.`
+    );
+
+    if (!confirmed) return;
+
+    setIsReactivating(true);
+    try {
+      console.log('🔄 Iniciando proceso para reactivar boleto:', currentResult.ticket.id);
+      
+      await reactivateTicket(currentResult.ticket.id);
+      
+      const updatedResult: TicketScanResult = {
+        ...currentResult,
+        ticket: {
+          ...currentResult.ticket,
+          status: 'active' as const,
+          usedAt: undefined
+        }
+      };
+      
+      setCurrentResult(updatedResult);
+      
+      setScanHistory((prev) => 
+        prev.map((scan, index) => 
+          index === 0 ? updatedResult : scan
+        )
+      );
+      
+      console.log('✅ Boleto reactivado exitosamente');
+      alert('✅ Boleto reactivado correctamente. Ahora puede ser usado nuevamente.');
+      
+    } catch (error: any) {
+      console.error('❌ Error al reactivar boleto:', error);
+      alert(`Error: ${error.message || 'No se pudo reactivar el boleto'}`);
+    } finally {
+      setIsReactivating(false);
     }
   };
 
@@ -738,12 +785,12 @@ export const QRScanner: React.FC = () => {
                 Escanear Otro
               </Button>
 
-              {/* ✅ BOTÓN ACTUALIZADO: Marcar como Usado */}
+              {/* Botón: Marcar como Usado (solo si está activo) */}
               {currentResult.isValid && currentResult.ticket.status === 'active' && (
                 <Button
                   variant="success"
                   onClick={handleMarkAsUsed}
-                  disabled={isMarkingAsUsed}
+                  disabled={isMarkingAsUsed || isReactivating}
                   className="flex-1 sm:flex-none !bg-green-600 hover:!bg-green-700"
                 >
                   {isMarkingAsUsed ? (
@@ -767,6 +814,40 @@ export const QRScanner: React.FC = () => {
                         />
                       </svg>
                       Marcar como Usado
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {/* Botón: Reactivar Boleto (solo si está usado) */}
+              {currentResult.isValid && currentResult.ticket.status === 'used' && (
+                <Button
+                  variant="secondary"
+                  onClick={handleReactivateTicket}
+                  disabled={isReactivating || isMarkingAsUsed}
+                  className="flex-1 sm:flex-none !bg-orange-600 hover:!bg-orange-700 !text-white !border-orange-600 hover:!border-orange-700"
+                >
+                  {isReactivating ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Reactivando...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Reactivar Boleto
                     </>
                   )}
                 </Button>

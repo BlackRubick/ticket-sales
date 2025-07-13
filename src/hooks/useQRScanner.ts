@@ -1,7 +1,6 @@
-// src/hooks/useQRScanner.ts - COMPLETO Y CORREGIDO
+// src/hooks/useQRScanner.ts - COMPLETAMENTE CORREGIDO
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { type TicketScanResult } from '../types/ticket';
-import { qrService } from '../services/qrService';
 
 // 🎯 Declarar ZXing global desde CDN
 declare global {
@@ -182,7 +181,7 @@ export const useQRScanner = () => {
         return;
       }
       
-      const result = await qrService.scanTicket(qrText);
+      const result = await scanTicket(qrText);
       setScanResult(result);
       
       // Detener escáner después de encontrar un código
@@ -225,27 +224,93 @@ export const useQRScanner = () => {
     }
   }, [availableCameras, currentCameraId, isScanning, startScanning, stopScanning]);
 
-  const scanTicket = async (qrData: string) => {
+  // ✅ Función scanTicket corregida con tipos explícitos
+  const scanTicket = useCallback(async (qrData: string): Promise<TicketScanResult> => {
     try {
       setError(null);
       console.log('🔍 Validando boleto manualmente:', qrData);
       
-      const result = await qrService.scanTicket(qrData);
+      const token = localStorage.getItem('nebula_auth_token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://venta-nebula.ddns.net/api';
+      
+      const response = await fetch(`${apiUrl}/tickets/validate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ ticketCode: qrData })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Error validating ticket');
+      }
+      
+      const data = await response.json();
+      console.log('✅ Respuesta de validación:', data);
+      
+      // ✅ Crear ticket con tipos explícitos
+      const ticketData = data.ticket;
+      const result: TicketScanResult = {
+        isValid: data.valid,
+        message: data.message,
+        ticket: {
+          id: ticketData.id,
+          ticketNumber: ticketData.ticketNumber,
+          eventName: ticketData.eventName,
+          eventDate: new Date(ticketData.eventDate),
+          eventLocation: ticketData.eventLocation,
+          price: Number(ticketData.price),
+          buyerName: ticketData.buyerName,
+          buyerEmail: ticketData.buyerEmail,
+          buyerPhone: ticketData.buyerPhone,
+          qrCode: ticketData.qrCode || qrData,
+          status: ticketData.status as 'active' | 'used' | 'cancelled',
+          createdAt: new Date(ticketData.createdAt),
+          updatedAt: new Date(ticketData.updatedAt),
+          usedAt: ticketData.usedAt ? new Date(ticketData.usedAt) : undefined
+        }
+      };
+      
       setScanResult(result);
       return result;
-    } catch (err: any) {
-      const errorMessage = err.message || 'Error al escanear boleto';
+      
+    } catch (error: any) {
+      const errorMessage = error.message || 'Error al escanear boleto';
       setError(errorMessage);
-      throw new Error(errorMessage);
+      
+      // ✅ Error result con tipos explícitos
+      const errorResult: TicketScanResult = {
+        isValid: false,
+        message: errorMessage,
+        ticket: {
+          id: '',
+          ticketNumber: qrData,
+          eventName: 'Error',
+          eventDate: new Date(),
+          eventLocation: '',
+          price: 0,
+          buyerName: '',
+          buyerEmail: '',
+          buyerPhone: '',
+          qrCode: qrData,
+          status: 'cancelled',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      };
+      
+      setScanResult(errorResult);
+      return errorResult;
     }
-  };
+  }, []); // ✅ Dependency array
 
-  // 🎯 NUEVA FUNCIÓN: Marcar boleto como usado
-  const markTicketAsUsed = async (ticketId: string) => {
+  // ✅ FUNCIÓN: Marcar boleto como usado
+  const markTicketAsUsed = useCallback(async (ticketId: string) => {
     try {
       console.log('🔄 Marcando ticket como usado:', ticketId);
       
-      // 🎯 LLAMADA REAL A TU API
       const token = localStorage.getItem('nebula_auth_token');
       const apiUrl = import.meta.env.VITE_API_URL || 'https://venta-nebula.ddns.net/api';
       
@@ -270,7 +335,38 @@ export const useQRScanner = () => {
       console.error('❌ Error en markTicketAsUsed:', error);
       throw error;
     }
-  };
+  }, []); // ✅ Dependency array
+
+  // ✅ FUNCIÓN: Reactivar boleto
+  const reactivateTicket = useCallback(async (ticketId: string) => {
+    try {
+      console.log('🔄 Reactivando ticket:', ticketId);
+      
+      const token = localStorage.getItem('nebula_auth_token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://venta-nebula.ddns.net/api';
+      
+      const response = await fetch(`${apiUrl}/tickets/${ticketId}/reactivate`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Error reactivando boleto');
+      }
+      
+      const result = await response.json();
+      console.log('✅ Ticket reactivado:', result);
+      
+      return result;
+    } catch (error: any) {
+      console.error('❌ Error en reactivateTicket:', error);
+      throw error;
+    }
+  }, []); // ✅ Dependency array
 
   return {
     // Estado
@@ -280,7 +376,7 @@ export const useQRScanner = () => {
     cameraPermission,
     availableCameras,
     currentCameraId,
-    zxingReady, // ✅ Nuevo: indica si ZXing está listo
+    zxingReady,
     
     // Referencias
     videoRef,
@@ -290,7 +386,8 @@ export const useQRScanner = () => {
     stopScanning,
     switchCamera,
     scanTicket,
-    markTicketAsUsed, // ✅ NUEVA FUNCIÓN AGREGADA
+    markTicketAsUsed, // ✅ INCLUIDA
+    reactivateTicket, // ✅ INCLUIDA
     
     // Utilidades
     canSwitchCamera: availableCameras.length > 1,
