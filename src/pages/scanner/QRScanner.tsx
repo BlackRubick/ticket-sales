@@ -15,9 +15,7 @@ export const QRScanner: React.FC = () => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
-  const [currentResult, setCurrentResult] = useState<TicketScanResult | null>(
-    null
-  );
+  const [currentResult, setCurrentResult] = useState<TicketScanResult | null>(null);
   const [scanCount, setScanCount] = useState({ valid: 0, invalid: 0 });
   const [isMarkingAsUsed, setIsMarkingAsUsed] = useState(false);
   const [isReactivating, setIsReactivating] = useState(false);
@@ -77,43 +75,40 @@ export const QRScanner: React.FC = () => {
     startScanning();
   };
 
-  // Marcar boleto como usado
+  // ✅ FUNCIÓN: Marcar boleto como usado - ACTUALIZADA
   const handleMarkAsUsed = async () => {
     if (!currentResult?.ticket?.id || !currentResult.isValid) return;
 
     setIsMarkingAsUsed(true);
     try {
-      console.log(
-        "🔄 Iniciando proceso para marcar como usado:",
-        currentResult.ticket.id
-      );
-
+      console.log('🔄 Iniciando proceso para marcar como usado:', currentResult.ticket.id);
+      
       await markTicketAsUsed(currentResult.ticket.id);
-
+      
+      // Actualizar el resultado actual
       const updatedResult: TicketScanResult = {
         ...currentResult,
         ticket: {
           ...currentResult.ticket,
-          status: "used" as const,
-          usedAt: new Date(),
-        },
+          status: 'used' as const,
+          usedAt: new Date() // ✅ Usando Date object como en tu interface
+        }
       };
-
+      
       setCurrentResult(updatedResult);
-
-      setScanHistory((prev) =>
-        prev.map(
-          (scan) =>
-            scan.ticket.id === currentResult.ticket.id ? updatedResult : scan // Busca por ID
+      
+      // ✅ ACTUALIZAR HISTORIAL: Buscar y actualizar el boleto en el historial  
+      setScanHistory((prev) => 
+        prev.map((scan) => 
+          scan.ticket.id === currentResult.ticket.id ? updatedResult : scan
         )
       );
-
-      console.log("✅ Boleto marcado como usado exitosamente");
+      
+      console.log('✅ Boleto marcado como usado exitosamente');
+      
     } catch (error: any) {
-      console.error("❌ Error al marcar boleto como usado:", error);
-      alert(
-        `Error: ${error.message || "No se pudo marcar el boleto como usado"}`
-      );
+      console.error('❌ Error al marcar boleto como usado:', error);
+      alert(`Error: ${error.message || 'No se pudo marcar el boleto como usado'}`);
     } finally {
       setIsMarkingAsUsed(false);
     }
@@ -125,44 +120,42 @@ export const QRScanner: React.FC = () => {
 
     const confirmed = window.confirm(
       `¿Estás seguro de que quieres reactivar este boleto?\n\n` +
-        `Boleto: ${currentResult.ticket.ticketNumber}\n` +
-        `Evento: ${currentResult.ticket.eventName}\n\n` +
-        `Esto permitirá que el boleto sea usado nuevamente.`
+      `Boleto: ${currentResult.ticket.ticketNumber}\n` +
+      `Evento: ${currentResult.ticket.eventName}\n\n` +
+      `Esto permitirá que el boleto sea usado nuevamente.`
     );
 
     if (!confirmed) return;
 
     setIsReactivating(true);
     try {
-      console.log(
-        "🔄 Iniciando proceso para reactivar boleto:",
-        currentResult.ticket.id
-      );
-
+      console.log('🔄 Iniciando proceso para reactivar boleto:', currentResult.ticket.id);
+      
       await reactivateTicket(currentResult.ticket.id);
-
+      
       const updatedResult: TicketScanResult = {
         ...currentResult,
         ticket: {
           ...currentResult.ticket,
-          status: "active" as const,
-          usedAt: undefined,
-        },
+          status: 'active' as const,
+          usedAt: undefined
+        }
       };
-
+      
       setCurrentResult(updatedResult);
-
-      setScanHistory((prev) =>
-        prev.map((scan, index) => (index === 0 ? updatedResult : scan))
+      
+      setScanHistory((prev) => 
+        prev.map((scan, index) => 
+          index === 0 ? updatedResult : scan
+        )
       );
-
-      console.log("✅ Boleto reactivado exitosamente");
-      alert(
-        "✅ Boleto reactivado correctamente. Ahora puede ser usado nuevamente."
-      );
+      
+      console.log('✅ Boleto reactivado exitosamente');
+      alert('✅ Boleto reactivado correctamente. Ahora puede ser usado nuevamente.');
+      
     } catch (error: any) {
-      console.error("❌ Error al reactivar boleto:", error);
-      alert(`Error: ${error.message || "No se pudo reactivar el boleto"}`);
+      console.error('❌ Error al reactivar boleto:', error);
+      alert(`Error: ${error.message || 'No se pudo reactivar el boleto'}`);
     } finally {
       setIsReactivating(false);
     }
@@ -203,73 +196,25 @@ export const QRScanner: React.FC = () => {
                 onClick={() => setShowManualInput(true)}
                 className="!bg-white/10 !backdrop-blur-lg !text-white !border-white/20 hover:!bg-white/20"
               >
-                <svg
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
+                <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
                 Código Manual
               </Button>
-
+              
               {!isScanning ? (
-                <Button
-                  onClick={startScanning}
-                  variant="light"
-                  className="shadow-lg"
-                >
-                  <svg
-                    className="h-5 w-5 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
+                <Button onClick={startScanning} variant="light" className="shadow-lg">
+                  <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   Iniciar Cámara
                 </Button>
               ) : (
-                <Button
-                  variant="danger"
-                  onClick={stopScanning}
-                  className="!bg-red-500 !text-white hover:!bg-red-600"
-                >
-                  <svg
-                    className="h-5 w-5 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-                    />
+                <Button variant="danger" onClick={stopScanning} className="!bg-red-500 !text-white hover:!bg-red-600">
+                  <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
                   </svg>
                   Detener
                 </Button>
@@ -286,21 +231,11 @@ export const QRScanner: React.FC = () => {
             <div className="bg-red-50 border border-red-200 rounded-xl p-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-start">
-                  <svg
-                    className="h-5 w-5 text-red-400 mt-0.5 mr-3"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
+                  <svg className="h-5 w-5 text-red-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
                   <div>
-                    <h3 className="text-sm font-medium text-red-800">
-                      Error de Cámara
-                    </h3>
+                    <h3 className="text-sm font-medium text-red-800">Error de Cámara</h3>
                     <p className="text-sm text-red-700 mt-1">{error}</p>
                   </div>
                 </div>
@@ -322,22 +257,12 @@ export const QRScanner: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center">
               <div className="p-3 bg-green-100 rounded-xl mr-4">
-                <svg
-                  className="h-6 w-6 text-green-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
+                <svg className="h-6 w-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {scanCount.valid}
-                </div>
+                <div className="text-2xl font-bold text-gray-900">{scanCount.valid}</div>
                 <div className="text-sm text-gray-600">Válidos</div>
               </div>
             </div>
@@ -346,22 +271,12 @@ export const QRScanner: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center">
               <div className="p-3 bg-red-100 rounded-xl mr-4">
-                <svg
-                  className="h-6 w-6 text-red-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
+                <svg className="h-6 w-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {scanCount.invalid}
-                </div>
+                <div className="text-2xl font-bold text-gray-900">{scanCount.invalid}</div>
                 <div className="text-sm text-gray-600">Inválidos</div>
               </div>
             </div>
@@ -370,18 +285,12 @@ export const QRScanner: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center">
               <div className="p-3 bg-blue-100 rounded-xl mr-4">
-                <svg
-                  className="h-6 w-6 text-blue-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="h-6 w-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {scanHistory.length}
-                </div>
+                <div className="text-2xl font-bold text-gray-900">{scanHistory.length}</div>
                 <div className="text-sm text-gray-600">Total</div>
               </div>
             </div>
@@ -390,24 +299,13 @@ export const QRScanner: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center">
               <div className="p-3 bg-purple-100 rounded-xl mr-4">
-                <svg
-                  className="h-6 w-6 text-purple-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
+                <svg className="h-6 w-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
                 <div className="text-2xl font-bold text-gray-900">
-                  {scanHistory.length > 0
-                    ? Math.round((scanCount.valid / scanHistory.length) * 100)
-                    : 0}
-                  %
+                  {scanHistory.length > 0 ? Math.round((scanCount.valid / scanHistory.length) * 100) : 0}%
                 </div>
                 <div className="text-sm text-gray-600">Éxito</div>
               </div>
@@ -420,11 +318,9 @@ export const QRScanner: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">
-                  Escáner de Cámara
-                </h3>
+                <h3 className="text-xl font-bold text-gray-900">Escáner de Cámara</h3>
                 <div className="flex items-center space-x-2">
-                  {cameraPermission === "granted" && (
+                  {cameraPermission === 'granted' && (
                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                       ✅ Permisos OK
                     </span>
@@ -436,20 +332,14 @@ export const QRScanner: React.FC = () => {
                     </div>
                   )}
                   {canSwitchCamera && isScanning && (
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={switchCamera}
-                    >
+                    <Button size="sm" variant="secondary" onClick={switchCamera}>
                       🔄 Cambiar
                     </Button>
                   )}
                 </div>
               </div>
               {availableCameras.length > 0 && (
-                <p className="text-sm text-gray-600 mt-2">
-                  📷 {currentCameraLabel}
-                </p>
+                <p className="text-sm text-gray-600 mt-2">📷 {currentCameraLabel}</p>
               )}
             </div>
 
@@ -461,46 +351,27 @@ export const QRScanner: React.FC = () => {
                   playsInline
                   muted
                   className="w-full h-full object-cover"
-                  style={{ display: isScanning ? "block" : "none" }}
+                  style={{ display: isScanning ? 'block' : 'none' }}
                 />
-
+                
                 {!isScanning && (
                   <div className="absolute inset-0 flex items-center justify-center h-full text-gray-400">
                     <div className="text-center">
                       <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-2xl flex items-center justify-center">
-                        <svg
-                          className="h-12 w-12"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
+                        <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-2">
-                        Cámara Desactivada
-                      </h4>
-                      <p className="text-gray-600 mb-4">
-                        Haz clic en "Iniciar Cámara" para comenzar a escanear
-                      </p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">Cámara Desactivada</h4>
+                      <p className="text-gray-600 mb-4">Haz clic en "Iniciar Cámara" para comenzar a escanear</p>
                       <Button onClick={startScanning} variant="light" size="sm">
                         Activar Cámara
                       </Button>
                     </div>
                   </div>
                 )}
-
+                
                 {isScanning && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
@@ -513,9 +384,7 @@ export const QRScanner: React.FC = () => {
                       </div>
                       <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 w-80">
                         <div className="bg-black/80 backdrop-blur-sm text-white text-center py-3 px-6 rounded-2xl">
-                          <p className="text-sm font-medium">
-                            Coloca el código QR dentro del marco
-                          </p>
+                          <p className="text-sm font-medium">Coloca el código QR dentro del marco</p>
                         </div>
                       </div>
                     </div>
@@ -527,10 +396,7 @@ export const QRScanner: React.FC = () => {
             <div className="p-6 bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-600">
-                  Estado:{" "}
-                  <span className="font-medium">
-                    {isScanning ? "Escaneando..." : "Inactivo"}
-                  </span>
+                  Estado: <span className="font-medium">{isScanning ? "Escaneando..." : "Inactivo"}</span>
                 </div>
                 {scanHistory.length > 0 && (
                   <Button variant="secondary" size="sm" onClick={clearHistory}>
@@ -545,12 +411,8 @@ export const QRScanner: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">
-                  Historial de Escaneos
-                </h3>
-                <span className="text-sm text-gray-500">
-                  Últimos {scanHistory.length}
-                </span>
+                <h3 className="text-xl font-bold text-gray-900">Historial de Escaneos</h3>
+                <span className="text-sm text-gray-500">Últimos {scanHistory.length}</span>
               </div>
             </div>
 
@@ -558,26 +420,12 @@ export const QRScanner: React.FC = () => {
               {scanHistory.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-2xl flex items-center justify-center">
-                    <svg
-                      className="h-8 w-8 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      />
+                    <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                   </div>
-                  <h4 className="text-lg font-medium text-gray-900 mb-2">
-                    No hay escaneos
-                  </h4>
-                  <p className="text-sm">
-                    Los resultados aparecerán aquí cuando escanees códigos QR
-                  </p>
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">No hay escaneos</h4>
+                  <p className="text-sm">Los resultados aparecerán aquí cuando escanees códigos QR</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-200">
@@ -592,70 +440,31 @@ export const QRScanner: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          <div
-                            className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                              scan.isValid
-                                ? "bg-green-100 text-green-600"
-                                : "bg-red-100 text-red-600"
-                            }`}
-                          >
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                            scan.isValid ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                          }`}>
                             {scan.isValid ? (
-                              <svg
-                                className="h-6 w-6"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                  clipRule="evenodd"
-                                />
+                              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                               </svg>
                             ) : (
-                              <svg
-                                className="h-6 w-6"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                  clipRule="evenodd"
-                                />
+                              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                               </svg>
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">
-                              {scan.ticket.ticketNumber}
-                            </p>
-                            <p className="text-sm text-gray-600 truncate">
-                              {scan.ticket.eventName}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate">
-                              {scan.ticket.buyerName}
-                            </p>
+                            <p className="font-medium text-gray-900 truncate">{scan.ticket.ticketNumber}</p>
+                            <p className="text-sm text-gray-600 truncate">{scan.ticket.eventName}</p>
+                            <p className="text-xs text-gray-500 truncate">{scan.ticket.buyerName}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
-                          <Badge
-                            variant={scan.isValid ? "success" : "danger"}
-                            size="sm"
-                          >
+                          <Badge variant={scan.isValid ? "success" : "danger"} size="sm">
                             {scan.isValid ? "VÁLIDO" : "INVÁLIDO"}
                           </Badge>
-                          <svg
-                            className="h-5 w-5 text-gray-400"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
+                          <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
                         </div>
                       </div>
@@ -698,18 +507,8 @@ export const QRScanner: React.FC = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent font-mono text-sm"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <svg
-                  className="h-5 w-5 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
+                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
             </div>
@@ -721,28 +520,16 @@ export const QRScanner: React.FC = () => {
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-blue-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clipRule="evenodd"
-                  />
+                <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-blue-800">
-                  Formato del Código
-                </h3>
+                <h3 className="text-sm font-medium text-blue-800">Formato del Código</h3>
                 <div className="mt-2 text-sm text-blue-700">
                   <p>
                     Los códigos válidos siguen el formato:{" "}
-                    <code className="bg-blue-100 px-1 rounded">
-                      NEBULA-XXX-XXXXXX
-                    </code>
+                    <code className="bg-blue-100 px-1 rounded">NEBULA-XXX-XXXXXX</code>
                   </p>
                 </div>
               </div>
@@ -822,23 +609,22 @@ export const QRScanner: React.FC = () => {
                 {currentResult.message}
               </p>
 
-              {currentResult.isValid &&
-                currentResult.ticket.status === "active" && (
-                  <div className="inline-flex items-center px-4 py-2 bg-green-50 text-green-800 rounded-full text-sm font-medium">
-                    <svg
-                      className="h-4 w-4 mr-2"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Acceso Autorizado
-                  </div>
-                )}
+              {currentResult.isValid && currentResult.ticket.status === 'active' && (
+                <div className="inline-flex items-center px-4 py-2 bg-green-50 text-green-800 rounded-full text-sm font-medium">
+                  <svg
+                    className="h-4 w-4 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Acceso Autorizado
+                </div>
+              )}
             </div>
 
             {/* Ticket Details */}
@@ -1002,74 +788,97 @@ export const QRScanner: React.FC = () => {
               </Button>
 
               {/* Botón: Marcar como Usado (solo si está activo) */}
-              {currentResult.isValid &&
-                currentResult.ticket.status === "active" && (
-                  <Button
-                    variant="success"
-                    onClick={handleMarkAsUsed}
-                    disabled={isMarkingAsUsed || isReactivating}
-                    className="flex-1 sm:flex-none !bg-green-600 hover:!bg-green-700"
-                  >
-                    {isMarkingAsUsed ? (
-                      <>
-                        <LoadingSpinner size="sm" className="mr-2" />
-                        Procesando...
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          className="h-5 w-5 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        Marcar como Usado
-                      </>
-                    )}
-                  </Button>
-                )}
+              {currentResult.isValid && currentResult.ticket.status === 'active' && (
+                <Button
+                  variant="success"
+                  onClick={handleMarkAsUsed}
+                  disabled={isMarkingAsUsed || isReactivating}
+                  className="flex-1 sm:flex-none !bg-green-600 hover:!bg-green-700"
+                >
+                  {isMarkingAsUsed ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Procesando...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Marcar como Usado
+                    </>
+                  )}
+                </Button>
+              )}
 
               {/* Botón: Reactivar Boleto (solo si está usado) */}
-              {currentResult.isValid &&
-                currentResult.ticket.status === "used" && (
-                  <Button
-                    variant="secondary"
-                    onClick={handleReactivateTicket}
-                    disabled={isReactivating || isMarkingAsUsed}
-                    className="flex-1 sm:flex-none !bg-orange-600 hover:!bg-orange-700 !text-white !border-orange-600 hover:!border-orange-700"
-                  >
-                    {isReactivating ? (
-                      <>
-                        <LoadingSpinner size="sm" className="mr-2" />
-                        Reactivando...
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          className="h-5 w-5 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                          />
-                        </svg>
-                        Reactivar Boleto
-                      </>
-                    )}
-                  </Button>
-                )}
+              {currentResult.isValid && currentResult.ticket.status === 'used' && (
+                <Button
+                  variant="secondary"
+                  onClick={handleReactivateTicket}
+                  disabled={isReactivating || isMarkingAsUsed}
+                  className="flex-1 sm:flex-none !bg-orange-600 hover:!bg-orange-700 !text-white !border-orange-600 hover:!border-orange-700"
+                >
+                  {isReactivating ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Reactivando...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Reactivar Boleto
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {/* 🔥 BOTÓN DE PRUEBA TEMPORAL - Para probar la funcionalidad */}
+              {currentResult.isValid && (
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    // Simular cambio de estado para testing
+                    const newStatus = currentResult.ticket.status === 'active' ? 'used' : 'active';
+                    const updatedResult = {
+                      ...currentResult,
+                      ticket: {
+                        ...currentResult.ticket,
+                        status: newStatus as 'active' | 'used',
+                        usedAt: newStatus === 'used' ? new Date() : undefined
+                      }
+                    };
+                    setCurrentResult(updatedResult);
+                  }}
+                  className="flex-1 sm:flex-none !bg-purple-600 hover:!bg-purple-700 !text-white"
+                >
+                  🧪 TEST: Cambiar Estado
+                  <br />
+                  <small>({currentResult.ticket.status} → {currentResult.ticket.status === 'active' ? 'used' : 'active'})</small>
+                </Button>
+              )}
             </div>
           </div>
         )}
