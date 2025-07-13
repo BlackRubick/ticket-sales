@@ -30,18 +30,26 @@ if (stats?.recentTickets) {
 useEffect(() => {
   const fetchStats = async () => {
     try {
-      console.log("🚀 Iniciando carga de stats...");
       const data = await adminService.getDashboardStats();
-      console.log("✅ Stats cargadas:", data);
-      setStats(data);
-    } catch (error: any) {  // ✅ Agregar ': any'
+      
+      // ✅ MAPEO RÁPIDO - convierte snake_case a camelCase
+      const mappedStats = {
+        ...data,
+        recentTickets: data.recentTickets?.map(ticket => ({
+          ...ticket,
+          ticketNumber: ticket.ticketNumber || ticket.ticketNumber,
+          eventName: ticket.eventName || ticket.eventName,
+          eventLocation: ticket.eventLocation || ticket.eventLocation,
+          buyerName: ticket.buyerName || ticket.buyerName,
+          buyerEmail: ticket.buyerEmail || ticket.buyerEmail,
+          buyerPhone: ticket.buyerPhone || ticket.buyerPhone,
+          qrCode: ticket.qrCode || ticket.qrCode
+        })) || []
+      };
+      
+      setStats(mappedStats);
+    } catch (error) {
       console.error("❌ Error fetching stats:", error);
-      // ✅ Ahora funciona
-      console.error("Error completo:", {
-        message: error?.message || 'Error desconocido',
-        stack: error?.stack || 'Sin stack trace',
-        error
-      });
     } finally {
       setLoading(false);
     }
@@ -49,7 +57,6 @@ useEffect(() => {
 
   fetchStats();
 }, []);
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
@@ -494,7 +501,7 @@ useEffect(() => {
                       ).toFixed(1)}
                       %
                     </span>
-                  </div>pero igual si estoy en mi pc no salen los datos xd  
+                  </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-cyan-600 h-2 rounded-full"
