@@ -1,6 +1,7 @@
 // src/hooks/useQRScanner.ts - COMPLETAMENTE CORREGIDO
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { type TicketScanResult } from '../types/ticket';
+import { qrService } from '../services/qrService'; // ✅ Usar tu servicio existente
 
 // 🎯 Declarar ZXing global desde CDN
 declare global {
@@ -224,55 +225,14 @@ export const useQRScanner = () => {
     }
   }, [availableCameras, currentCameraId, isScanning, startScanning, stopScanning]);
 
-  // ✅ Función scanTicket corregida con tipos explícitos
+  // ✅ Función scanTicket usando tu qrService existente
   const scanTicket = useCallback(async (qrData: string): Promise<TicketScanResult> => {
     try {
       setError(null);
-      console.log('🔍 Validando boleto manualmente:', qrData);
+      console.log('🔍 Validando boleto con qrService:', qrData);
       
-      const token = localStorage.getItem('nebula_auth_token');
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://venta-nebula.ddns.net/api';
-      
-      const response = await fetch(`${apiUrl}/tickets/validate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ ticketCode: qrData })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Error validating ticket');
-      }
-      
-      const data = await response.json();
-      console.log('✅ Respuesta de validación:', data);
-      
-      // ✅ Crear ticket con tipos explícitos
-      const ticketData = data.ticket;
-      const result: TicketScanResult = {
-        isValid: data.valid,
-        message: data.message,
-        ticket: {
-          id: ticketData.id,
-          ticketNumber: ticketData.ticketNumber,
-          eventName: ticketData.eventName,
-          eventDate: new Date(ticketData.eventDate),
-          eventLocation: ticketData.eventLocation,
-          price: Number(ticketData.price),
-          buyerName: ticketData.buyerName,
-          buyerEmail: ticketData.buyerEmail,
-          buyerPhone: ticketData.buyerPhone,
-          qrCode: ticketData.qrCode || qrData,
-          status: ticketData.status as 'active' | 'used' | 'cancelled',
-          createdAt: new Date(ticketData.createdAt),
-          updatedAt: new Date(ticketData.updatedAt),
-          usedAt: ticketData.usedAt ? new Date(ticketData.usedAt) : undefined
-        }
-      };
-      
+      // ✅ USAR TU SERVICIO EXISTENTE QUE YA FUNCIONABA
+      const result = await qrService.scanTicket(qrData);
       setScanResult(result);
       return result;
       
