@@ -18,7 +18,7 @@ export const useQRScanner = () => {
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const scanIntervalRef = useRef<number | null>(null); // Cambiado de NodeJS.Timeout a number
+  const scanIntervalRef = useRef<number | null>(null);
 
   // Verificar permisos de cámara al montar el componente
   useEffect(() => {
@@ -86,6 +86,8 @@ export const useQRScanner = () => {
       setError(null);
       setIsScanning(false);
 
+      console.log('🎥 Iniciando proceso de cámara...');
+
       // Verificar si el navegador soporta getUserMedia
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error('Tu navegador no soporta acceso a la cámara. Prueba con Chrome, Firefox o Safari.');
@@ -102,7 +104,7 @@ export const useQRScanner = () => {
         streamRef.current = null;
       }
 
-      // Configurar restricciones de la cámara - Corregido para evitar error de spread
+      // Configurar restricciones de la cámara
       let constraints: MediaStreamConstraints = {
         video: {
           facingMode: 'environment', // Preferir cámara trasera
@@ -126,48 +128,81 @@ export const useQRScanner = () => {
         };
       }
 
-      console.log('🎥 Solicitando acceso a la cámara...');
+      console.log('🚀 Solicitando acceso a cámara...');
       
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       
+      console.log('✅ Stream obtenido');
+
+      // AQUÍ ESTÁ EL FIX - Verificar videoRef DESPUÉS de obtener el stream
       if (!videoRef.current) {
-        throw new Error('Elemento de video no disponible');
+        console.log('⏳ Video element no encontrado, esperando...');
+        // Esperar un poco y verificar de nuevo
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        if (!videoRef.current) {
+          throw new Error('Elemento de video no disponible. Por favor, recarga la página.');
+        }
       }
 
-      console.log('✅ Acceso a cámara obtenido');
+      console.log('✅ Video element encontrado');
       
-      // Configurar el video
+      // Ahora sí asignar el stream
       videoRef.current.srcObject = stream;
       streamRef.current = stream;
       
       // Esperar a que el video esté listo
       await new Promise<void>((resolve, reject) => {
-        if (!videoRef.current) {
-          reject(new Error('Video element not found'));
-          return;
-        }
-
-        const video = videoRef.current;
+        const video = videoRef.current!;
         
-        video.onloadedmetadata = () => {
+        const onLoadedMetadata = () => {
+          console.log('📊 Video metadata loaded');
+          video.removeEventListener('loadedmetadata', onLoadedMetadata);
+          video.removeEventListener('error', onError);
+          
           video.play()
             .then(() => {
-              console.log('✅ Video iniciado correctamente');
+              console.log('▶️ Video iniciado correctamente');
               setIsScanning(true);
               setCameraPermission('granted');
               resolve();
             })
-            .catch(reject);
+            .catch((playError) => {
+              console.error('❌ Error reproduciendo video:', playError);
+              reject(new Error('Error reproduciendo el video'));
+            });
         };
 
-        video.onerror = () => {
+        const onError = (err: any) => {
+          console.error('❌ Video error:', err);
+          video.removeEventListener('loadedmetadata', onLoadedMetadata);
+          video.removeEventListener('error', onError);
           reject(new Error('Error cargando el video'));
         };
 
+        video.addEventListener('loadedmetadata', onLoadedMetadata);
+        video.addEventListener('error', onError);
+
         // Timeout de seguridad
         setTimeout(() => {
-          reject(new Error('Timeout esperando que el video esté listo'));
-        }, 10000);
+          video.removeEventListener('loadedmetadata', onLoadedMetadata);
+          video.removeEventListener('error', onError);
+          
+          if (video.readyState >= 2) {
+            console.log('⏰ Timeout pero video tiene datos, intentando reproducir...');
+            video.play()
+              .then(() => {
+                setIsScanning(true);
+                setCameraPermission('granted');
+                resolve();
+              })
+              .catch(() => {
+                reject(new Error('Timeout esperando que el video esté listo'));
+              });
+          } else {
+            reject(new Error('Timeout esperando que el video esté listo'));
+          }
+        }, 8000);
       });
 
       // Actualizar lista de cámaras después del acceso exitoso
