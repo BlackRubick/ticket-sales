@@ -830,30 +830,40 @@ export const QRScanner: React.FC = () => {
                 </Button>
               )}
 
-              {/* ✅ Botón: Reactivar Boleto - PRUEBA SIMPLE */}
+              {/* ✅ Botón: Reactivar Boleto - CON API */}
               {(currentResult.isValid || currentResult.ticket.status === 'used') && currentResult.ticket.status === 'used' && (
                 <Button
                   variant="secondary"
-                  onClick={() => {
-                    // PRUEBA SIMPLE SIN APIs
-                    const updatedResult: TicketScanResult = {
-                      ...currentResult,
-                      isValid: true,
-                      ticket: {
-                        ...currentResult.ticket,
-                        status: 'active' as const,
-                        usedAt: undefined
+                  onClick={async () => {
+                    try {
+                      // Primero actualizar UI
+                      const updatedResult: TicketScanResult = {
+                        ...currentResult,
+                        isValid: true,
+                        ticket: {
+                          ...currentResult.ticket,
+                          status: 'active' as const,
+                          usedAt: undefined
+                        }
+                      };
+                      setCurrentResult(updatedResult);
+                      setScanHistory((prev) => 
+                        prev.map((scan) => 
+                          scan.ticket.id === currentResult.ticket.id ? updatedResult : scan
+                        )
+                      );
+
+                      // Luego llamar API (si existe)
+                      if (reactivateTicket) {
+                        await reactivateTicket(currentResult.ticket.id);
+                        alert('✅ Boleto reactivado correctamente en la base de datos');
+                      } else {
+                        alert('✅ Boleto reactivado (solo UI - falta conectar API)');
                       }
-                    };
-                    setCurrentResult(updatedResult);
-                    setScanHistory((prev) => 
-                      prev.map((scan) => 
-                        scan.ticket.id === currentResult.ticket.id ? updatedResult : scan
-                      )
-                    );
-                    alert('Boleto reactivado (SOLO UI)');
+                    } catch (error: any) {
+                      alert(`Error: ${error.message}`);
+                    }
                   }}
-                  disabled={isReactivating || isMarkingAsUsed}
                   className="flex-1 sm:flex-none !bg-orange-600 hover:!bg-orange-700 !text-white !border-orange-600 hover:!border-orange-700"
                 >
                   <svg
@@ -869,7 +879,7 @@ export const QRScanner: React.FC = () => {
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                     />
                   </svg>
-                  🧪 Reactivar (Solo UI)
+                  Reactivar Boleto
                 </Button>
               )}
 
