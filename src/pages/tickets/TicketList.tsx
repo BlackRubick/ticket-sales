@@ -20,7 +20,6 @@ export const TicketList: React.FC = () => {
   const [success, setSuccess] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [currentPage, setCurrentPage] = useState(1);
   const { tickets, loading, error, resendTicket, fetchTickets } = useTickets();
 
   // Cargar tickets al montar el componente y cuando cambien los filtros
@@ -37,12 +36,11 @@ export const TicketList: React.FC = () => {
     };
 
     loadTickets();
-  }, [currentPage, searchTerm, filterStatus, fetchTickets]);
+  }, [ searchTerm, filterStatus, fetchTickets]);
 
   // Debounce para la búsqueda
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setCurrentPage(1); // Reset a la primera página cuando se busca
     }, 500);
 
     return () => clearTimeout(timeoutId);
