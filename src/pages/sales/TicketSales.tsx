@@ -138,7 +138,7 @@ export const TicketSales: React.FC = () => {
   };
 
   const quickTemplates = [
-    { name: 'Fiesta', icon: '🎵', eventName: 'Fiesta Suchiapa', location: 'Los aguacates', price: 100},
+    { name: 'Fiesta', icon: '🎵', eventName: 'La ultima y nos vamos', location: 'Ranchito', price: 100},
   ];
 
   // Calcular estadísticas de ventas del día
