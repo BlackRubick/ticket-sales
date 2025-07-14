@@ -28,9 +28,8 @@ export const TicketList: React.FC = () => {
     const loadTickets = async () => {
       try {
         await fetchTickets({
-          page: currentPage,
           search: searchTerm.trim() || undefined,
-          status: filterStatus === "all" ? undefined : filterStatus
+          status: filterStatus === "all" ? undefined : filterStatus,
         });
       } catch (err) {
         console.error("Error loading tickets:", err);
@@ -38,7 +37,7 @@ export const TicketList: React.FC = () => {
     };
 
     loadTickets();
-  }, [currentPage,  searchTerm, filterStatus, fetchTickets]);
+  }, [currentPage, searchTerm, filterStatus, fetchTickets]);
 
   // Debounce para la búsqueda
   useEffect(() => {
@@ -346,13 +345,16 @@ export const TicketList: React.FC = () => {
                       </p>
                       <p className="text-gray-600 text-sm">
                         🗓️{" "}
-                        {new Date(ticket.eventDate).toLocaleDateString("es-MX", {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {new Date(ticket.eventDate).toLocaleDateString(
+                          "es-MX",
+                          {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
                       </p>
                     </div>
 
@@ -441,7 +443,9 @@ export const TicketList: React.FC = () => {
                                 {ticket.ticketNumber}
                               </div>
                               <div className="text-xs text-gray-500">
-                                {new Date(ticket.createdAt).toLocaleDateString()}
+                                {new Date(
+                                  ticket.createdAt
+                                ).toLocaleDateString()}
                               </div>
                               <div className="lg:hidden mt-1">
                                 <div className="text-sm font-medium text-gray-900 line-clamp-1">
@@ -726,13 +730,16 @@ export const TicketList: React.FC = () => {
                       Fecha de Creación
                     </p>
                     <p className="font-medium text-gray-900 text-sm">
-                      {new Date(selectedTicket.createdAt).toLocaleDateString("es-MX", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {new Date(selectedTicket.createdAt).toLocaleDateString(
+                        "es-MX",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )}
                     </p>
                   </div>
                 </div>
@@ -741,13 +748,16 @@ export const TicketList: React.FC = () => {
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Fecha de Uso</p>
                       <p className="font-medium text-orange-600 text-sm">
-                        {new Date(selectedTicket.usedAt).toLocaleDateString("es-MX", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {new Date(selectedTicket.usedAt).toLocaleDateString(
+                          "es-MX",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
                       </p>
                     </div>
                   )}
