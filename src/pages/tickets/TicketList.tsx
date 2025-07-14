@@ -21,8 +21,6 @@ export const TicketList: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit] = useState(12); // 12 boletos por página
-
   const { tickets, loading, error, resendTicket, fetchTickets } = useTickets();
 
   // Cargar tickets al montar el componente y cuando cambien los filtros
@@ -31,7 +29,6 @@ export const TicketList: React.FC = () => {
       try {
         await fetchTickets({
           page: currentPage,
-          limit,
           search: searchTerm.trim() || undefined,
           status: filterStatus === "all" ? undefined : filterStatus
         });
@@ -41,7 +38,7 @@ export const TicketList: React.FC = () => {
     };
 
     loadTickets();
-  }, [currentPage, limit, searchTerm, filterStatus, fetchTickets]);
+  }, [currentPage,  searchTerm, filterStatus, fetchTickets]);
 
   // Debounce para la búsqueda
   useEffect(() => {
