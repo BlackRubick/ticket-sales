@@ -1,3 +1,6 @@
+
+// src/utils/validators.ts - SIN RESTRICCIONES DE FECHA
+
 export const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -17,8 +20,9 @@ export const validatePrice = (price: number): boolean => {
   return price > 0 && price <= 10000; // Max $10,000
 };
 
+// ✅ OPCIÓN 1: Eliminar completamente la validación (permite cualquier fecha)
 export const validateEventDate = (date: string): boolean => {
+  // Solo verificar que sea una fecha válida
   const eventDate = new Date(date);
-  const now = new Date();
-  return eventDate > now; // Event must be in the future
+  return !isNaN(eventDate.getTime()); // Retorna true si es una fecha válida
 };
